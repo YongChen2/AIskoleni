@@ -29,7 +29,7 @@ export function ReadinessQuiz() {
     const rec = recommend(pct);
     const weakest = [...byArea].sort((a, b) => a.pct - b.pct)[0];
     return (
-      <div className="border border-line" aria-live="polite">
+      <div className="border border-line [contain:layout_paint]" aria-live="polite">
         <div className="micro-xs flex justify-between border-b border-line px-3 py-2 text-muted md:px-5">
           <span>[ REPORT / DIAGNOSTIKA DOKONČENA ]</span>
           <span>{questions.length}/{questions.length}</span>
@@ -90,7 +90,7 @@ export function ReadinessQuiz() {
   }
 
   return (
-    <div className="border border-line">
+    <div className="border border-line [contain:layout_paint]">
       <div className="micro-xs flex justify-between border-b border-line px-3 py-2 text-muted md:px-5">
         <span>
           [ DIAGNOSTIKA / {areas[q.area].toUpperCase()} ]

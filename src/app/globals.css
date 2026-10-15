@@ -223,7 +223,9 @@ body::after {
     vertical-align: text-bottom;
     background: var(--fg);
     filter: drop-shadow(0 0 4px var(--fg));
-    animation: blink 1s steps(1) infinite;
+    /* plynulé „fosforové“ doznívání: ostré bliknutí (steps/plató) zdržuje vykreslení po interakci (INP) */
+    animation: blink 1.1s linear infinite;
+    animation-play-state: paused;
   }
 
   /* Hranaté posuvníky */
@@ -275,9 +277,21 @@ body::after {
   }
 }
 
+/* blikání jen u viditelných terminálů (data-blink nastavuje IntersectionObserver) */
+[data-blink] .cursor-block,
+.boot-overlay .cursor-block {
+  animation-play-state: running;
+}
+
 @keyframes blink {
+  0% {
+    opacity: 1;
+  }
   50% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -352,4 +366,113 @@ html[data-boot="run"] .boot-overlay {
     clip-path: inset(0 0 0 0);
     transform: none;
   }
+}
+
+/* Vlastní kurzor */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+html.has-cursor :is(input[type="text"], input[type="email"], input[type="tel"], textarea, canvas) {
+  cursor: auto !important;
+}
+.cursor-root {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+.cursor-root[data-hidden],
+.cursor-root[data-mode="native"] {
+  visibility: hidden;
+}
+.cursor-cross {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.cursor-plus {
+  position: absolute;
+  left: -7px;
+  top: -12px;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--fg);
+}
+.cursor-bar {
+  position: absolute;
+  left: -1px;
+  top: -11px;
+  width: 2px;
+  height: 22px;
+  background: var(--fg);
+  display: none;
+}
+.cursor-label {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  white-space: nowrap;
+  padding: 1px 4px;
+  background: var(--bg);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.cursor-root[data-mode="text"] .cursor-plus,
+.cursor-root[data-mode="text"] .cursor-label {
+  display: none;
+}
+.cursor-root[data-mode="text"] .cursor-bar {
+  display: block;
+}
+.cursor-root[data-mode="frame"] .cursor-plus {
+  color: var(--accent);
+}
+.cursor-root[data-mode="frame"] .cursor-label {
+  display: none;
+}
+.cursor-corner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  border: 0 solid var(--accent);
+  visibility: hidden;
+}
+.cursor-root[data-mode="frame"] .cursor-corner {
+  visibility: visible;
+}
+.cursor-corner[data-corner="0"] {
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.cursor-corner[data-corner="1"] {
+  border-top-width: 2px;
+  border-right-width: 2px;
+  margin-left: -9px;
+}
+.cursor-corner[data-corner="2"] {
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  margin-top: -9px;
+}
+.cursor-corner[data-corner="3"] {
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  margin-left: -9px;
+  margin-top: -9px;
+}
+
+.hud-panel {
+  transition:
+    transform 0.3s steps(5),
+    opacity 0.3s steps(5);
+}
+.hud-panel[data-shown="0"] {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
 }

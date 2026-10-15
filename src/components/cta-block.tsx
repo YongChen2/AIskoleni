@@ -13,7 +13,7 @@ export function CtaBlock({
   text?: string;
 }) {
   return (
-    <Section className="relative overflow-hidden">
+    <Section className="relative overflow-hidden" data-hud-code="CMD" data-hud-label="Spolupráce">
       <div className="hazard absolute inset-x-0 top-0 h-2" aria-hidden />
       <p className="micro text-muted">
         <span className="text-accent">CMD</span> {">>>"} [ ZAHÁJIT SPOLUPRÁCI ]

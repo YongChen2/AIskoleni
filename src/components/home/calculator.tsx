@@ -136,7 +136,7 @@ export function Calculator() {
           <Slider id={ids.share} label="Část rutiny, kterou AI zrychlí" unit="%" value={share} min={10} max={50} step={5} onChange={setShare} />
         </div>
 
-        <div className="flex flex-col justify-between overflow-hidden lg:col-span-7">
+        <div className="flex flex-col justify-between overflow-hidden [contain:layout_paint] lg:col-span-7">
           <div className="p-4 md:p-6">
             <p className="micro text-muted">{">>>"} Ušetřený čas za rok</p>
             <p className="macro mt-4 whitespace-nowrap text-[clamp(2.75rem,7.5vw,10rem)] leading-none">

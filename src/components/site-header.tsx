@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { brand, nav } from "@/config/brand";
 import { cx } from "./ui";
+import { HudMini } from "./hud";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -39,7 +40,7 @@ export function SiteHeader() {
           STATUS: <span className="text-fg">PŘIJÍMÁME POPTÁVKY</span>
         </span>
       </div>
-      <div className="flex h-14 items-stretch md:h-16">
+      <div className="relative flex h-14 items-stretch md:h-16">
         <Link
           href="/"
           className="flex items-center border-r border-line px-4 font-display text-lg uppercase tracking-tight md:px-8 md:text-xl"
@@ -68,6 +69,8 @@ export function SiteHeader() {
             );
           })}
         </nav>
+
+        <HudMini />
 
         <div className="ml-auto flex items-stretch">
           <Link

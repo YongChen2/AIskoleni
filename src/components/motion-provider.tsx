@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { decrypt } from "@/lib/decrypt";
 import { getLenis, loadEngine, prefersReducedMotion, scrollToTarget, startLenis } from "@/lib/motion";
 
 const idle = (cb: () => void) => {
@@ -49,7 +50,11 @@ export function MotionProvider() {
     let revert: (() => void) | undefined;
     let cancelled = false;
 
-    loadEngine().then(({ gsap, ScrollTrigger }) => {
+    const stops: (() => void)[] = [];
+    let onBoot: (() => void) | undefined;
+
+    loadEngine().then((engine) => {
+      const { gsap, ScrollTrigger } = engine;
       if (cancelled) return;
       const below = (el: Element) => el.getBoundingClientRect().top > window.innerHeight * 0.92;
       const reveal = (targets: Element[] | NodeListOf<Element>, from: gsap.TweenVars, trigger: Element, start: string) =>
@@ -74,6 +79,23 @@ export function MotionProvider() {
         gsap.utils.toArray<HTMLElement>("[data-section-head]").filter(below).forEach((el) =>
           reveal([el], { clipPath: "inset(0 100% 0 0)", duration: 0.5, ease: "steps(10)" }, el, "top 92%")
         );
+
+        // Dešifrování makro nadpisů – jednou při vstupu do viewportu
+        gsap.utils.toArray<HTMLElement>("main :is(h1, h2):is(.macro, .macro-md)").forEach((el) => {
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 90%",
+            once: true,
+            onEnter: () => {
+              const run = () => stops.push(decrypt(el, engine));
+              // během bootu počkat, až se overlay odsune
+              if (document.documentElement.dataset.boot === "run") {
+                onBoot = run;
+                window.addEventListener("boot:done", run, { once: true });
+              } else run();
+            },
+          });
+        });
       });
       ScrollTrigger.refresh();
       revert = () => ctx.revert();
@@ -82,6 +104,8 @@ export function MotionProvider() {
     return () => {
       cancelled = true;
       revert?.();
+      stops.forEach((s) => s());
+      if (onBoot) window.removeEventListener("boot:done", onBoot);
     };
   }, [pathname]);
 

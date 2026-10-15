@@ -10,7 +10,7 @@ const DemoTerminal = dynamic(() => import("./demo-terminal"), {
 
 function TerminalSkeleton() {
   return (
-    <div className="micro flex min-h-[32rem] items-center justify-center border border-line text-muted">
+    <div data-blink className="micro flex min-h-[32rem] items-center justify-center border border-line text-muted">
       [ INICIALIZACE TERMINÁLU<span className="cursor-block ml-2" aria-hidden /> ]
     </div>
   );

@@ -84,6 +84,7 @@ export function BootSequence() {
     const t = setTimeout(() => {
       setGone(true);
       delete document.documentElement.dataset.boot;
+      window.dispatchEvent(new Event("boot:done"));
     }, 450);
     return () => clearTimeout(t);
   }, [leaving]);

@@ -10,7 +10,7 @@ const meta: [string, string][] = [
 
 export function Hero({ visual }: { visual?: React.ReactNode }) {
   return (
-    <section className="relative isolate overflow-hidden border-b border-line">
+    <section data-hud-code="SEC.00" data-hud-label="Řídicí panel" className="relative isolate overflow-hidden border-b border-line">
       <div className="absolute inset-0 -z-10" aria-hidden>
         {visual}
       </div>

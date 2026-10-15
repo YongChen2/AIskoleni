@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { cx } from "@/components/ui";
+import { useInViewAttr } from "@/lib/use-in-view-attr";
 import { DEMO_DAILY_LIMIT, DEMO_MAX_TASK, MARK_OUTPUT, MARK_PROMPT, demoRoles, type DemoRoleId } from "./roles";
 
 type Status = "idle" | "running" | "done" | "error";
@@ -23,6 +24,8 @@ export default function DemoTerminal() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const abort = useRef<AbortController | null>(null);
+  const root = useRef<HTMLDivElement>(null);
+  useInViewAttr(root);
 
   const current = demoRoles.find((r) => r.id === role)!;
   const { output, prompt } = split(raw);
@@ -82,7 +85,7 @@ export default function DemoTerminal() {
   const running = status === "running";
 
   return (
-    <div className="border border-line bg-bg">
+    <div ref={root} className="border border-line bg-bg">
       {/* Stavový řádek */}
       <div className="micro-xs flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2 md:px-5">
         <span className="signal-glow">● SYSTÉM ONLINE</span>

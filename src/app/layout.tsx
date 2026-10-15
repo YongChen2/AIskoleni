@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { MotionProvider } from "@/components/motion-provider";
 import { JsonLd } from "@/components/json-ld";
 import { BootSequence, bootScript } from "@/components/boot-sequence";
+import { Cursor } from "@/components/cursor";
+import { HudPanel } from "@/components/hud";
 import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
@@ -46,6 +48,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="obsah">{children}</main>
         <SiteFooter />
         <MotionProvider />
+        <HudPanel />
+        <Cursor />
         <JsonLd data={organizationSchema} />
       </body>
     </html>
