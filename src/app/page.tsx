@@ -1,4 +1,6 @@
 import { CtaBlock } from "@/components/cta-block";
+import { Calculator } from "@/components/home/calculator";
+import { DemoSection } from "@/components/home/demo-section";
 import { Faq } from "@/components/home/faq";
 import { Formats } from "@/components/home/formats";
 import { Hero } from "@/components/home/hero";
@@ -12,6 +14,8 @@ export default function Home() {
       <Hero visual={<HeroVisual />} />
       <Problem />
       <Formats />
+      <DemoSection />
+      <Calculator />
       <Proof />
       <Faq />
       <CtaBlock />
