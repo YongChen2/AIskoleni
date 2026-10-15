@@ -56,7 +56,7 @@ export function SectionHead({
   meta?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line pb-3 micro">
+    <div data-section-head className="micro flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line pb-3">
       <span>
         <span className="text-accent">{code}</span> <span className="text-muted">{"///"}</span> [ {label} ]
       </span>

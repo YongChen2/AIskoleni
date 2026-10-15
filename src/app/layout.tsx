@@ -3,6 +3,7 @@ import { brand, brandCssVars } from "@/config/brand";
 import { fontVariables } from "@/config/fonts";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MotionProvider } from "@/components/motion-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteHeader />
         <main id="obsah">{children}</main>
         <SiteFooter />
+        <MotionProvider />
       </body>
     </html>
   );
