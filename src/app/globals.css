@@ -326,3 +326,30 @@ html.lenis body {
 .lenis.lenis-stopped {
   overflow: clip;
 }
+
+/* Boot sekvence – viditelná jen když ji skript v <head> povolil */
+.boot-overlay {
+  display: none;
+}
+html[data-boot="run"] .boot-overlay {
+  display: flex;
+  transition: transform 0.45s steps(8);
+}
+.boot-overlay[data-leaving] {
+  transform: translate3d(0, -100%, 0);
+}
+
+/* Přechod mezi stránkami – jen při klientské navigaci */
+.page-enter {
+  animation: page-reveal 0.42s steps(7) both;
+}
+@keyframes page-reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}

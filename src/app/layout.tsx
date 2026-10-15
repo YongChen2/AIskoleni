@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MotionProvider } from "@/components/motion-provider";
 import { JsonLd } from "@/components/json-ld";
+import { BootSequence, bootScript } from "@/components/boot-sequence";
 import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
@@ -32,8 +33,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="cs" className={fontVariables} style={brandCssVars}>
+    <html lang="cs" className={fontVariables} style={brandCssVars} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+      </head>
       <body>
+        <BootSequence />
         <a href="#obsah" className="micro sr-only z-[200] bg-accent px-4 py-3 text-bg focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Přeskočit na obsah
         </a>
