@@ -32,6 +32,9 @@ export const brand = {
     line: "#2A2A2A",
     accent: "#FF2A2A",
     signal: "#4AF626",
+    /** Pouze tenké značky v datovém semaforu (/bezpecnost) */
+    trafficGreen: "#3DBA4E",
+    trafficOrange: "#FF9A1F",
   },
 } as const;
 
