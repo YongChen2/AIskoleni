@@ -56,7 +56,7 @@ export function ReadinessQuiz() {
         <div className="grid gap-8 p-4 md:p-8 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <p className="micro text-accent">{">>>"} Doporučený formát</p>
-            <h3 className="macro-md mt-4">{rec.title}</h3>
+            <h2 className="macro-md mt-4">{rec.title}</h2>
             <p className="prose-body mt-4">{rec.text}</p>
             <p className="prose-body mt-4 text-muted">
               Nejslabší oblast: <strong className="font-normal text-fg">{areas[weakest.area]}</strong>. Na tu se
@@ -107,7 +107,7 @@ export function ReadinessQuiz() {
       <fieldset key={q.id} className="p-4 md:p-8">
         <legend className="sr-only">Otázka {step + 1}</legend>
         <p className="micro text-muted">Q.{String(step + 1).padStart(2, "0")}</p>
-        <h3 className="macro-sm mt-4 max-w-[28ch]">{q.q}</h3>
+        <h2 className="macro-sm mt-4 max-w-[28ch]">{q.q}</h2>
         <div className="mt-8 grid gap-px border border-line bg-line">
           {q.options.map((o, i) => (
             <button

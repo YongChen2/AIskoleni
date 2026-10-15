@@ -4,6 +4,8 @@ import { fontVariables } from "@/config/fonts";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MotionProvider } from "@/components/motion-provider";
+import { JsonLd } from "@/components/json-ld";
+import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
     template: `%s — ${brand.name}`,
   },
   description: brand.description,
+  alternates: { canonical: "/" },
   applicationName: brand.name,
   openGraph: {
     type: "website",
@@ -38,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="obsah">{children}</main>
         <SiteFooter />
         <MotionProvider />
+        <JsonLd data={organizationSchema} />
       </body>
     </html>
   );

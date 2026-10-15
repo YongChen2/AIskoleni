@@ -302,3 +302,12 @@ body::after {
   background-clip: text;
   -webkit-text-stroke: 0.5px var(--fg);
 }
+
+/* Dekorativní obrysové numerály (bez plné výplně – nejsou obsahem) */
+.outline-num {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--muted);
+}
+.group:hover .outline-num {
+  -webkit-text-stroke-color: var(--accent);
+}

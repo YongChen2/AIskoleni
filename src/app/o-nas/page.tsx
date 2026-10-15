@@ -42,6 +42,7 @@ export default function ONasPage() {
       />
 
       <Section>
+        <h2 className="sr-only">Náš přístup</h2>
         <figure className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-12">
             <SectionHead code="Q.01" label="Přístup" />
@@ -57,6 +58,7 @@ export default function ONasPage() {
 
       <Section>
         <SectionHead code="SEC.61" label="Principy" />
+        <h2 className="sr-only">Principy</h2>
         <ul className="hairgrid mt-12 md:mt-16 md:grid-cols-2">
           {principles.map(([code, title, text]) => (
             <li key={code} className="p-5 md:p-8">
@@ -70,6 +72,7 @@ export default function ONasPage() {
 
       <Section>
         <SectionHead code="SEC.62" label="Tým" meta="FOTO: [DOPLNIT]" />
+        <h2 className="sr-only">Tým</h2>
         <ul className="mt-12 grid gap-8 md:mt-16 md:grid-cols-3">
           {team.map((t) => (
             <li key={t.unit}>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
+import { brand } from "@/config/brand";
 import { CtaBlock } from "@/components/cta-block";
 import { SectionHead } from "@/components/ui";
 import { formatDate, getPost, posts } from "@/content/blog/posts";
@@ -50,6 +52,18 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </div>
       </article>
       <CtaBlock />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          description: post.description,
+          datePublished: post.date,
+          inLanguage: "cs",
+          mainEntityOfPage: `${brand.url.replace(/\/$/, "")}/blog/${post.slug}`,
+          publisher: { "@type": "Organization", name: brand.name },
+        }}
+      />
     </>
   );
 }

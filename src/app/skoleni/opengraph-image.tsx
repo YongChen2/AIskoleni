@@ -1,0 +1,9 @@
+import { ogContentType, ogSize, renderOg } from "@/lib/og";
+
+export const alt = "Formáty školení AI";
+export const size = ogSize;
+export const contentType = ogContentType;
+
+export default function Image() {
+  return renderOg({ title: "Tři kroky od zvědavosti k rutině", code: "SEC.10", label: "Formáty školení" });
+}

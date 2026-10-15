@@ -19,7 +19,7 @@ export function Formats() {
                 <span>&lt; MODUL {f.step} &gt;</span>
                 <span className="group-hover:text-accent">{">>>"}</span>
               </div>
-              <p aria-hidden className="macro mt-8 text-[clamp(5rem,12vw,10rem)] text-line group-hover:text-accent">
+              <p aria-hidden className="macro outline-num mt-8 text-[clamp(5rem,12vw,10rem)]">
                 {f.step}
               </p>
               <h3 className="macro-sm mt-4">{f.title}</h3>

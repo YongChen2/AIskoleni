@@ -72,7 +72,7 @@ export default function BezpecnostPage() {
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <SectionHead code="SEC.22" label="AI Act" />
-            <p aria-hidden className="macro mt-10 text-line">Art. 4</p>
+            <p aria-hidden className="macro outline-num mt-10">Art. 4</p>
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
             <h2 className="macro-sm">Povinnost AI gramotnosti</h2>

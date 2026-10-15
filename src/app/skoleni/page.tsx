@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { coursesSchema } from "@/lib/schema";
 import { CtaBlock } from "@/components/cta-block";
 import { DayTimeline } from "@/components/day-timeline";
 import { PageHero, Section, SectionHead } from "@/components/ui";
@@ -36,7 +38,7 @@ export default function SkoleniPage() {
           <SectionHead code={`MOD.${f.step}`} label={`Krok ${idx + 1}`} meta={f.output} />
           <div className="mt-10 grid gap-10 md:mt-16 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <p aria-hidden className="macro text-line">{f.step}</p>
+              <p aria-hidden className="macro outline-num">{f.step}</p>
               <h2 className="macro-md mt-4">{f.title}</h2>
             </div>
             <div className="lg:col-span-7">
@@ -92,6 +94,7 @@ export default function SkoleniPage() {
       </Section>
 
       <CtaBlock />
+      <JsonLd data={coursesSchema} />
     </>
   );
 }

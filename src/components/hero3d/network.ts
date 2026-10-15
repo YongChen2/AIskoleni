@@ -32,18 +32,24 @@ export function createNetwork(count = 520, seed = 7): Network {
     nodes.push([c[0] + g() * 1.3, c[1] + g() * 0.8, c[2] + g()]);
   }
 
-  // Každý uzel propojit se 2–3 nejbližšími sousedy
+  // Každý uzel propojit se 2–3 nejbližšími sousedy (bez řazení – jen top-k)
   const edges: [number, number][] = [];
-  const seen = new Set<string>();
+  const seen = new Set<number>();
   for (let i = 0; i < nodes.length; i++) {
-    const d = nodes
-      .map((n, j) => [j, (n[0] - nodes[i][0]) ** 2 + (n[1] - nodes[i][1]) ** 2 + (n[2] - nodes[i][2]) ** 2])
-      .filter(([j]) => j !== i)
-      .sort((a, b) => a[1] - b[1]);
     const k = 2 + (i % 2);
-    for (let m = 0; m < k; m++) {
-      const j = d[m][0];
-      const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+    const best: [number, number][] = [];
+    const [xi, yi, zi] = nodes[i];
+    for (let j = 0; j < nodes.length; j++) {
+      if (j === i) continue;
+      const d = (nodes[j][0] - xi) ** 2 + (nodes[j][1] - yi) ** 2 + (nodes[j][2] - zi) ** 2;
+      if (best.length < k || d < best[best.length - 1][1]) {
+        best.push([j, d]);
+        best.sort((a, b) => a[1] - b[1]);
+        if (best.length > k) best.pop();
+      }
+    }
+    for (const [j] of best) {
+      const key = i < j ? i * 100000 + j : j * 100000 + i;
       if (!seen.has(key)) {
         seen.add(key);
         edges.push([i, j]);
