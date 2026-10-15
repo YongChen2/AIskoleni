@@ -1,8 +1,8 @@
 "use client";
 
-import { animate } from "motion";
 import { useEffect, useId, useRef, useState } from "react";
 import { Section, SectionHead } from "@/components/ui";
+import { loadEngine, prefersReducedMotion } from "@/lib/motion";
 
 const WEEKS = 46; // pracovní týdny v roce po odečtení dovolené a svátků
 
@@ -16,23 +16,33 @@ function Counter({ value, id, htmlFor }: { value: number; id?: string; htmlFor: 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const from = prev.current;
+    prev.current = value;
+    if (prefersReducedMotion()) {
       el.textContent = fmt.format(value);
-      prev.current = value;
       return;
     }
-    const controls = animate(prev.current, value, {
-      duration: 0.6,
-      ease: "linear",
-      onUpdate: (v) => {
-        el.textContent = fmt.format(Math.round(v / 10) * 10);
-      },
-      onComplete: () => {
-        el.textContent = fmt.format(value);
-      },
+    // Mechanické „dopočítání“ po krocích na sdílené smyčce (gsap.ticker)
+    let kill: (() => void) | undefined;
+    let cancelled = false;
+    loadEngine().then(({ gsap }) => {
+      if (cancelled) return;
+      const o = { v: from };
+      const t = gsap.to(o, {
+        v: value,
+        duration: 0.5,
+        ease: "steps(10)",
+        onUpdate: () => {
+          el.textContent = fmt.format(Math.round(o.v));
+        },
+      });
+      kill = () => t.kill();
     });
-    prev.current = value;
-    return () => controls.stop();
+    return () => {
+      cancelled = true;
+      kill?.();
+      el.textContent = fmt.format(value);
+    };
   }, [value]);
 
   return (
