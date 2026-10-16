@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CtaBlock } from "@/components/cta-block";
-import { Corners, PageHero, Section, SectionHead } from "@/components/ui";
+import { PageHero, Section, SectionHead } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "O nás",
@@ -77,7 +77,6 @@ export default function ONasPage() {
           {team.map((t) => (
             <li key={t.unit}>
               <div className="relative aspect-[4/5] border border-line">
-                <Corners />
                 <div className="halftone absolute inset-3" aria-hidden />
                 <span className="micro-xs absolute left-3 top-3 bg-bg px-2 py-1 text-muted">UNIT / {t.unit}</span>
                 <span className="micro-xs absolute bottom-3 right-3 bg-bg px-2 py-1 text-accent">[DOPLNIT] FOTO</span>

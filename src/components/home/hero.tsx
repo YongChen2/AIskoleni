@@ -1,4 +1,4 @@
-import { ButtonLink, Corners } from "@/components/ui";
+import { ButtonLink } from "@/components/ui";
 import { brand } from "@/config/brand";
 import { SensorButton } from "@/components/hero3d/sensor-button";
 
@@ -17,7 +17,6 @@ export function Hero({ visual }: { visual?: React.ReactNode }) {
       </div>
 
       <div className="relative mx-4 my-4 min-h-[calc(100svh-5.5rem)] border border-line md:mx-8 md:my-8 md:min-h-[calc(100svh-10rem)]">
-        <Corners />
         <div className="micro-xs flex flex-wrap justify-between gap-2 border-b border-line px-3 py-2 text-muted md:px-5">
           <span>
             <span className="text-accent">SEC.00</span> {"///"} [ ŘÍDICÍ PANEL ]

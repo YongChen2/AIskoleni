@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { brand, nav } from "@/config/brand";
-import { Barcode } from "./ui";
+import { Logo } from "./logo";
 
 const legal = [
   { href: "/kontakt", label: "Kontakt" },
@@ -8,57 +8,65 @@ const legal = [
   { href: "/cookies", label: "Cookies" },
 ];
 
+const linkCls = "inline-flex min-h-11 items-center text-[15px] text-muted transition-colors duration-200 hover:text-fg lg:min-h-0 lg:py-1.5";
+
 export function SiteFooter() {
   return (
-    <footer className="border-t-2 border-accent">
-      <div className="hairgrid grid-cols-1 border-x-0 md:grid-cols-12">
-        <div className="p-4 md:col-span-5 md:p-8">
-          <p className="micro text-muted">[ Spojení ]</p>
-          <p className="mt-4 text-lg">
-            <a href={`mailto:${brand.contact.email}`} className="underline decoration-line underline-offset-4 hover:text-accent">
-              {brand.contact.email}
-            </a>
-          </p>
-          <p className="mt-1">{brand.contact.phone}</p>
-          <div className="micro-xs mt-6 text-muted">
-            <p>{brand.contact.company}</p>
-            <p>{brand.contact.ico}</p>
-            <p>{brand.contact.address}</p>
+    <footer className="relative overflow-hidden border-t border-line">
+      <div aria-hidden className="glow -bottom-72 left-1/2 h-[32rem] w-[60rem] -translate-x-1/2 opacity-70" />
+      <div className="shell relative grid gap-12 py-16 md:grid-cols-12 md:py-20">
+        <div className="md:col-span-5">
+          <Logo />
+          <p className="body mt-5 max-w-sm text-[15px]">{brand.claim}. Praktická školení podle rolí, na vašich úlohách a s jasnými pravidly pro data.</p>
+          <div className="mt-6 space-y-1 text-[15px]">
+            <p>
+              <a href={`mailto:${brand.contact.email}`} className="text-fg underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-accent">
+                {brand.contact.email}
+              </a>
+            </p>
+            <p className="text-muted">{brand.contact.phone}</p>
           </div>
         </div>
-        <nav aria-label="Mapa webu" className="p-4 md:col-span-4 md:p-8">
-          <p className="micro text-muted">[ Mapa webu ]</p>
-          <ul className="micro mt-4 grid grid-cols-2">
+
+        <nav aria-label="Mapa webu" className="md:col-span-4">
+          <p className="text-[13px] font-medium text-fg">Web</p>
+          <ul className="mt-3 grid grid-cols-2 gap-x-6">
             <li>
-              <Link href="/" className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">&gt; Úvod</Link>
+              <Link href="/" className={linkCls}>
+                Úvod
+              </Link>
             </li>
             {nav.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">&gt; {n.label}</Link>
+                <Link href={n.href} className={linkCls}>
+                  {n.label}
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
-        <div className="flex flex-col justify-between gap-6 p-4 md:col-span-3 md:p-8">
-          <ul className="micro">
+
+        <div className="md:col-span-3">
+          <p className="text-[13px] font-medium text-fg">Informace</p>
+          <ul className="mt-3">
             {legal.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">{"/// "}{n.label}</Link>
+                <Link href={n.href} className={linkCls}>
+                  {n.label}
+                </Link>
               </li>
             ))}
           </ul>
-          <Barcode />
         </div>
       </div>
-      <div className="overflow-hidden border-t border-line px-4 pt-6 md:px-8">
-        <p aria-hidden className="macro whitespace-nowrap leading-[0.8] text-transparent [-webkit-text-stroke:1px_var(--line)]">
-          {brand.name}
-          {brand.mark}
-        </p>
-      </div>
-      <div className="micro-xs flex flex-wrap justify-between gap-2 border-t border-line px-4 py-3 text-muted md:px-8">
-        <span>© {brand.name} — Všechna práva vyhrazena</span>
-        <span>{brand.revision} / BUILD CZ</span>
+
+      <div className="shell relative">
+        <div className="flex flex-col gap-2 border-t border-line py-6 text-[13px] text-subtle md:flex-row md:items-center md:justify-between">
+          <span>
+            © {brand.name} · {brand.contact.company} · {brand.contact.ico}
+          </span>
+          <span>{brand.contact.address}</span>
+        </div>
       </div>
     </footer>
   );

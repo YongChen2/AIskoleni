@@ -2,7 +2,7 @@
 
 /**
  * Sdílené jádro pohybu.
- * - Jediná rAF smyčka = `gsap.ticker`. Lenis, reveal animace, kurzor, HUD i R3F se na ni jen věší.
+ * - Jediná rAF smyčka = `gsap.ticker`. Lenis, reveal animace i R3F se na ni jen věší.
  * - GSAP + Lenis se načítají líně (po prvním vykreslení), nejsou v kritické cestě LCP.
  * - Lenis jen na zařízeních s myší; dotyk = nativní scroll.
  */
@@ -63,7 +63,7 @@ export async function startLenis() {
   if (lenis || prefersReducedMotion() || !hasFinePointer()) return null;
   const [{ gsap, ScrollTrigger }, { default: LenisCtor }] = await Promise.all([loadEngine(), import("lenis")]);
   if (lenis) return lenis;
-  const l = new LenisCtor({ lerp: 0.08, wheelMultiplier: 0.9, syncTouch: false, autoRaf: false });
+  const l = new LenisCtor({ lerp: 0.1, wheelMultiplier: 0.9, syncTouch: false, autoRaf: false });
   l.on("scroll", ScrollTrigger.update);
   const tick = (t: number) => l.raf(t * 1000);
   gsap.ticker.add(tick);

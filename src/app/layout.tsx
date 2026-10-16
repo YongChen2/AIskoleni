@@ -5,9 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MotionProvider } from "@/components/motion-provider";
 import { JsonLd } from "@/components/json-ld";
-import { BootSequence, bootScript } from "@/components/boot-sequence";
-import { Cursor } from "@/components/cursor";
-import { HudPanel } from "@/components/hud";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { BottomBar } from "@/components/bottom-bar";
 import { SoundClicks } from "@/components/sound-toggle";
 import { organizationSchema } from "@/lib/schema";
@@ -38,22 +36,17 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="cs" className={fontVariables} style={brandCssVars} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-      </head>
       <body>
-        <BootSequence />
-        <a href="#obsah" className="micro sr-only z-[200] bg-accent px-4 py-3 text-bg focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        <a href="#obsah" className="sr-only z-[200] rounded-lg bg-accent px-4 py-3 text-[15px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Přeskočit na obsah
         </a>
         <SiteHeader />
         <main id="obsah">{children}</main>
         <SiteFooter />
+        <ScrollProgress />
         <MotionProvider />
-        <HudPanel />
         <BottomBar />
         <SoundClicks />
-        <Cursor />
         <JsonLd data={organizationSchema} />
       </body>
     </html>

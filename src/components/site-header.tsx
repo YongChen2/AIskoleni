@@ -2,21 +2,41 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { setMenuOpen, useMenuOpen } from "@/lib/menu-store";
 import { brand, nav } from "@/config/brand";
-import { cx } from "./ui";
-import { HudMini } from "./hud";
+import { ArrowRight } from "./icons";
+import { Logo } from "./logo";
 import { SoundToggle } from "./sound-toggle";
+import { ButtonLink, cx } from "./ui";
+
+const isActive = (pathname: string, href: string) =>
+  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
 export function SiteHeader() {
   const pathname = usePathname();
   const open = useMenuOpen();
+  const ref = useRef<HTMLElement>(null);
 
   // Zavřít menu po navigaci
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  // Průhledná hlavička; blur a okraj až po odscrollování (jen přepnutí atributu, bez re-renderu)
+  useEffect(() => {
+    let scrolled = false;
+    const onScroll = () => {
+      const s = window.scrollY > 8;
+      if (s !== scrolled) {
+        scrolled = s;
+        ref.current?.toggleAttribute("data-scrolled", s);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -30,97 +50,79 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg">
-      <div className="micro-xs hidden border-b border-line text-muted md:flex">
-        <span className="border-r border-line px-8 py-1.5">
-          UNIT / {brand.code}-01
-        </span>
-        <span className="border-r border-line px-4 py-1.5">{brand.revision}</span>
-        <span className="border-r border-line px-4 py-1.5">{brand.contact.coords}</span>
-        <span className="ml-auto border-r border-line px-4 py-1.5">
-          STATUS: <span className="text-fg">PŘIJÍMÁME POPTÁVKY</span>
-        </span>
-        <SoundToggle className="px-8 py-1.5" />
-      </div>
-      <div className="relative flex h-14 items-stretch md:h-16">
-        <Link
-          href="/"
-          className="flex items-center border-r border-line px-4 font-display text-lg uppercase tracking-tight md:px-8 md:text-xl"
-          aria-label={`${brand.name} – úvod`}
-        >
-          {brand.name}
-          <span className="text-accent">{brand.mark}</span>
-        </Link>
-
-        <nav aria-label="Hlavní navigace" className="hidden flex-1 items-stretch lg:flex">
-          {nav.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cx(
-                  "micro flex items-center border-r border-line px-4 hover:bg-fg hover:text-bg xl:px-5",
-                  active && "text-accent"
-                )}
-              >
-                {active ? "> " : ""}
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <HudMini />
-
-        <div className="ml-auto flex items-stretch">
-          <Link
-            href="/kontakt"
-            className="micro hidden items-center bg-accent px-6 text-bg hover:bg-fg sm:flex md:px-8"
-          >
-            [ Domluvit školení ]
+    <>
+      <header ref={ref} data-menu={open || undefined} className="site-header sticky top-0 z-50">
+        <div className="shell grid h-[var(--header-h)] grid-cols-[1fr_auto] items-center gap-6 lg:grid-cols-[1fr_auto_1fr]">
+          <Link href="/" className="flex items-center justify-self-start rounded-lg" aria-label={`${brand.name} – úvod`}>
+            <Logo />
           </Link>
-          <button
-            type="button"
-            className="micro flex items-center border-l border-line px-4 lg:hidden"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            onClick={() => setMenuOpen(!open)}
-          >
-            {open ? "[ ZAVŘÍT ]" : "[ MENU ]"}
-          </button>
-        </div>
-      </div>
 
-      {open ? (
-        <div id="mobile-menu" className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] top-14 z-50 overflow-y-auto bg-bg lg:hidden">
-          <nav aria-label="Mobilní navigace" className="flex flex-col">
-            {[{ href: "/", label: "Úvod" }, ...nav, { href: "/kontakt", label: "Kontakt" }].map((item, i) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={cx(
-                  "flex items-baseline gap-4 border-b border-line px-4 py-5",
-                  pathname === item.href && "text-accent"
-                )}
-              >
-                <span className="micro-xs text-muted">{String(i).padStart(2, "0")}</span>
-                <span className="font-display text-4xl uppercase tracking-tight">{item.label}</span>
-              </Link>
-            ))}
+          <nav aria-label="Hlavní navigace" className="hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {nav.map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={cx(
+                        "inline-flex h-9 items-center rounded-[9px] px-3 text-[14px] font-medium transition-colors duration-200",
+                        active ? "bg-white/[0.06] text-fg" : "text-muted hover:text-fg",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
-          <div className="flex justify-end border-b border-line px-4">
-            <SoundToggle className="min-h-11" />
+
+          <div className="flex items-center justify-self-end gap-2">
+            <span className="hidden lg:contents">
+              <SoundToggle />
+            </span>
+            <ButtonLink href="/kontakt" variant="primary" size="sm" arrow={false}>
+              <span className="sm:hidden">Kontakt</span>
+              <span className="hidden sm:inline">Domluvit školení</span>
+            </ButtonLink>
           </div>
-          <div className="p-4">
-            <Link href="/kontakt" className="btn btn-accent w-full" onClick={() => setMenuOpen(false)}>
-              [ Domluvit školení ]
-            </Link>
-          </div>
+        </div>
+      </header>
+
+      {/* mimo <header>: backdrop-filter hlavičky by z ní udělal containing block pro position:fixed */}
+      {open ? (
+        <div
+          id="mobile-menu"
+          className="mobile-menu fixed inset-x-0 bottom-0 top-[var(--header-h)] z-50 overflow-y-auto bg-bg/90 backdrop-blur-xl lg:hidden"
+        >
+          <nav aria-label="Mobilní navigace" className="shell flex flex-col pb-32 pt-6">
+            {[{ href: "/", label: "Úvod" }, ...nav, { href: "/kontakt", label: "Kontakt" }].map((item, i) => {
+              const active = isActive(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  style={{ "--i": i } as React.CSSProperties}
+                  className={cx(
+                    "flex min-h-14 items-center justify-between border-b border-line text-[26px] font-semibold tracking-[-0.03em]",
+                    active ? "text-fg" : "text-muted",
+                  )}
+                >
+                  {item.label}
+                  {active ? <span className="h-1.5 w-1.5 rounded-full bg-accent" /> : <ArrowRight size={18} className="text-subtle" />}
+                </Link>
+              );
+            })}
+            <div className="mt-6 flex items-center justify-between">
+              <SoundToggle withLabel className="-ml-2 px-2" />
+            </div>
+          </nav>
         </div>
       ) : null}
-    </header>
+    </>
   );
 }

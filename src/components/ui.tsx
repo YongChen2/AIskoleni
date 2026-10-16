@@ -1,118 +1,147 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
+import { ArrowRight } from "./icons";
 
 export function cx(...c: (string | false | null | undefined)[]) {
   return c.filter(Boolean).join(" ");
 }
 
-/** Obdélníkové tlačítko-odkaz `[ TEXT ]` */
+type Variant = "primary" | "secondary" | "ghost";
+
+/** Tlačítko-odkaz. Primární má šipku, která se na hover posune. */
 export function ButtonLink({
   href,
   children,
+  variant,
   accent,
+  arrow,
+  size,
   className,
   ...rest
-}: ComponentProps<typeof Link> & { accent?: boolean }) {
+}: ComponentProps<typeof Link> & { variant?: Variant; accent?: boolean; arrow?: boolean; size?: "sm" }) {
+  const v: Variant = variant ?? (accent ? "primary" : "secondary");
+  const showArrow = arrow ?? v === "primary";
   return (
-    <Link href={href} className={cx("btn", accent && "btn-accent", className)} {...rest}>
-      [ {children} ]
+    <Link href={href} data-magnetic className={cx("btn", `btn-${v}`, size === "sm" && "btn-sm", className)} {...rest}>
+      {children}
+      {showArrow ? (
+        <span className="btn-arrow">
+          <ArrowRight size={16} />
+        </span>
+      ) : null}
     </Link>
   );
 }
 
-/** Křížek na průsečíku gridu */
-export function Cross({ className }: { className?: string }) {
-  return (
-    <span aria-hidden className={cx("pointer-events-none absolute micro text-muted select-none leading-none", className)}>
-      +
-    </span>
-  );
+/** Malý štítek nad nadpisem sekce (nejvýš jeden na tři sekce) */
+export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+  return <p className={cx("eyebrow", className)}>{children}</p>;
 }
 
-/** Čtyři křížky v rozích rodiče (rodič musí mít `relative`) */
-export function Corners() {
-  return (
-    <>
-      <Cross className="-left-[5px] -top-[8px]" />
-      <Cross className="-right-[5px] -top-[8px]" />
-      <Cross className="-left-[5px] -bottom-[8px]" />
-      <Cross className="-right-[5px] -bottom-[8px]" />
-    </>
-  );
-}
-
-export function Barcode({ className }: { className?: string }) {
-  return <div aria-hidden className={cx("barcode h-8", className)} />;
-}
-
-/** Hlavička sekce: kód sekce, štítek a volitelná metadata */
+/**
+ * Hlavička sekce: volitelný eyebrow, nadpis H2 a perex.
+ * Starý podpis (`code`/`label`/`meta`) zůstává jen přechodně – `label` se zobrazí jako eyebrow.
+ */
 export function SectionHead({
-  code,
+  eyebrow,
+  title,
+  lead,
   label,
-  meta,
+  align = "left",
+  className,
+  children,
 }: {
-  code: string;
-  label: string;
+  eyebrow?: ReactNode;
+  title?: ReactNode;
+  lead?: ReactNode;
+  /** @deprecated přechodně – použijte `eyebrow` */
+  label?: string;
+  /** @deprecated */
+  code?: string;
+  /** @deprecated */
   meta?: ReactNode;
+  align?: "left" | "center";
+  className?: string;
+  children?: ReactNode;
 }) {
+  const e = eyebrow ?? label;
   return (
-    <div data-section-head data-hud-code={code} data-hud-label={label} className="micro flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line pb-3">
-      <span>
-        <span className="text-accent">{code}</span> <span className="text-muted">{"///"}</span> [ {label} ]
-      </span>
-      {meta ? <span className="text-muted">{meta}</span> : null}
+    <div className={cx(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
+      {e ? <Eyebrow>{e}</Eyebrow> : null}
+      {title ? <h2 className={cx("display-2", e ? "mt-5" : null)}>{title}</h2> : null}
+      {lead ? <p className={cx("lead mt-5", align === "center" && "mx-auto")}>{lead}</p> : null}
+      {children}
     </div>
   );
 }
 
-/** Obal sekce s vnitřním okrajem a horní linkou přes celou šířku */
+/** Obal sekce: svislé mezery + obsahový kontejner */
 export function Section({
   id,
   children,
   className,
+  shellClassName,
   ...rest
-}: { id?: string; children: ReactNode; className?: string } & ComponentProps<"section">) {
+}: { id?: string; children: ReactNode; className?: string; shellClassName?: string } & ComponentProps<"section">) {
   return (
-    <section id={id} className={cx("border-t border-line px-4 py-16 md:px-8 md:py-28", className)} {...rest}>
-      {children}
+    <section id={id} className={cx("section relative", className)} {...rest}>
+      <div className={cx("shell", shellClassName)}>{children}</div>
     </section>
   );
 }
 
-export function Tag({ children, accent }: { children: ReactNode; accent?: boolean }) {
-  return (
-    <span className={cx("micro-xs inline-block border px-2 py-1", accent ? "border-accent text-accent" : "border-line text-muted")}>
-      {children}
-    </span>
-  );
+export function Badge({
+  children,
+  tone,
+  dot,
+  className,
+}: {
+  children: ReactNode;
+  tone?: "success" | "warning" | "danger";
+  dot?: boolean;
+  className?: string;
+}) {
+  return <span className={cx("badge", tone && `badge-${tone}`, dot && "badge-dot", className)}>{children}</span>;
 }
 
-/** Hlavička podstránky – obří titulek s mono metadaty */
+/** @deprecated přechodně – použijte `Badge` */
+export function Tag({ children, accent }: { children: ReactNode; accent?: boolean }) {
+  return <Badge tone={accent ? "danger" : undefined}>{children}</Badge>;
+}
+
+const metaCols: Record<number, string> = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-4" };
+
+/** Hlavička podstránky – eyebrow, H1, perex a volitelný řádek klíčových údajů */
 export function PageHero({
-  code,
   label,
   title,
   lead,
   meta,
+  children,
 }: {
-  code: string;
   label: string;
   title: ReactNode;
   lead?: ReactNode;
   meta?: [string, string][];
+  /** @deprecated */
+  code?: string;
+  children?: ReactNode;
 }) {
   return (
-    <header className="px-4 pb-14 pt-10 md:px-8 md:pb-24 md:pt-16">
-      <SectionHead code={code} label={label} meta={`UNIT / ${code}`} />
-      <h1 className="macro mt-10 break-words md:mt-16">{title}</h1>
-      <div className="mt-10 grid gap-8 md:mt-16 md:grid-cols-12">
-        {lead ? <p className="prose-body text-fg md:col-span-7">{lead}</p> : null}
+    <header className="relative isolate overflow-hidden pb-16 pt-14 md:pb-24 md:pt-24">
+      <div aria-hidden className="grid-bg absolute inset-0 -z-10" />
+      <div aria-hidden className="glow -z-10 -top-48 right-[-10%] h-[36rem] w-[48rem]" />
+      <div className="shell">
+        <Eyebrow>{label}</Eyebrow>
+        <h1 className="display-1 mt-6 max-w-4xl">{title}</h1>
+        {lead ? <p className="lead mt-6">{lead}</p> : null}
+        {children}
         {meta ? (
-          <dl className="micro grid grid-cols-2 gap-x-6 gap-y-2 self-end md:col-span-4 md:col-start-9">
-            {meta.map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-muted">{k}</dt>
-                <dd>{v}</dd>
+          <dl className={cx("mt-12 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line md:mt-16", metaCols[meta.length])}>
+            {meta.map(([k, v], i) => (
+              <div key={k} className={cx("bg-bg px-4 py-4 md:px-5", meta.length % 2 === 1 && i === meta.length - 1 && "col-span-2 md:col-span-1")}>
+                <dt className="label">{k}</dt>
+                <dd className="mt-1 text-[15px] text-fg">{v}</dd>
               </div>
             ))}
           </dl>

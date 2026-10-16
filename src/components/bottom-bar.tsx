@@ -5,17 +5,18 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { haptic } from "@/lib/haptics";
 import { setMenuOpen, useMenuOpen } from "@/lib/menu-store";
+import { Close, Gauge, Layers, Mail, Menu, Shield } from "./icons";
 import { cx } from "./ui";
 
 const items = [
-  { href: "/skoleni", label: "Školení", code: "01" },
-  { href: "/bezpecnost", label: "Data", code: "02" },
-  { href: "/kviz", label: "Kvíz", code: "03" },
-  { href: "/kontakt", label: "Kontakt", code: "04" },
+  { href: "/skoleni", label: "Školení", Icon: Layers },
+  { href: "/bezpecnost", label: "Data", Icon: Shield },
+  { href: "/kviz", label: "Kvíz", Icon: Gauge },
+  { href: "/kontakt", label: "Kontakt", Icon: Mail },
 ];
 
 /**
- * Spodní navigační lišta pro mobil (na dosah palce). Skrývá se při scrollu dolů, ukáže při scrollu nahoru.
+ * Plovoucí tab bar pro mobil (na dosah palce). Skrývá se při scrollu dolů, ukáže při scrollu nahoru.
  * Bez rAF smyčky – jen přepnutí atributu ve scroll handleru, pohyb řeší CSS transform.
  */
 export function BottomBar() {
@@ -44,27 +45,35 @@ export function BottomBar() {
   // CTA haptika (globálně pro hlavní tlačítka)
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest?.(".btn-accent")) haptic(15);
+      if ((e.target as Element).closest?.(".btn-primary")) haptic(15);
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
   }, []);
 
   return (
-    <nav ref={bar} aria-label="Rychlá navigace" className="bottom-bar fixed inset-x-0 bottom-0 z-[60] border-t border-line bg-bg lg:hidden" data-open={open || undefined}>
-      <ul className="grid grid-cols-5">
-        {items.map((it) => {
-          const active = pathname === it.href;
+    <nav
+      ref={bar}
+      aria-label="Rychlá navigace"
+      className="tab-bar fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-[60] rounded-[20px] border border-line lg:hidden"
+      data-open={open || undefined}
+    >
+      <ul className="grid grid-cols-5 p-1">
+        {items.map(({ href, label, Icon }) => {
+          const active = pathname === href || pathname.startsWith(href + "/");
           return (
-            <li key={it.href} className="border-r border-line">
+            <li key={href}>
               <Link
-                href={it.href}
+                href={href}
                 onClick={() => setMenuOpen(false)}
                 aria-current={active ? "page" : undefined}
-                className={cx("flex min-h-14 flex-col items-center justify-center gap-0.5 px-1", active ? "text-accent" : "text-fg")}
+                className={cx(
+                  "flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[16px] text-[11px] font-medium transition-colors duration-200",
+                  active ? "bg-white/[0.06] text-fg" : "text-muted"
+                )}
               >
-                <span className="micro-xs text-muted">{it.code}</span>
-                <span className="micro-xs">{it.label}</span>
+                <Icon size={20} className={active ? "text-accent" : undefined} />
+                {label}
               </Link>
             </li>
           );
@@ -78,9 +87,13 @@ export function BottomBar() {
               haptic(10);
               setMenuOpen(!open);
             }}
-            className={cx("micro-xs flex min-h-14 w-full items-center justify-center", open ? "bg-fg text-bg" : "text-fg")}
+            className={cx(
+              "flex min-h-[52px] w-full flex-col items-center justify-center gap-1 rounded-[16px] text-[11px] font-medium transition-colors duration-200",
+              open ? "bg-white/[0.08] text-fg" : "text-muted"
+            )}
           >
-            {open ? "[ × ]" : "[ MENU ]"}
+            {open ? <Close size={20} /> : <Menu size={20} />}
+            {open ? "Zavřít" : "Menu"}
           </button>
         </li>
       </ul>

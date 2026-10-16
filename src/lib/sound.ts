@@ -3,12 +3,12 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * Tiché mechanické UI zvuky přes Web Audio API (bez souborů).
+ * Tiché, měkké UI zvuky přes Web Audio API (bez souborů).
  * Výchozí VYPNUTO, volba v localStorage. AudioContext vzniká až po interakci uživatele
  * a zvuk nikdy nehraje bez předchozí interakce.
  */
 
-type Kind = "click" | "confirm" | "error" | "boot";
+type Kind = "click" | "confirm" | "error";
 
 const KEY = "ui-sound";
 let enabled = false;
@@ -81,18 +81,14 @@ export function play(kind: Kind) {
   const t = a.currentTime + 0.005;
   switch (kind) {
     case "click":
-      blip(a, 1800, t, 0.025, "square", 0.025);
+      blip(a, 1400, t, 0.03, "sine", 0.03);
       break;
     case "confirm":
-      blip(a, 880, t, 0.05, "square", 0.03);
-      blip(a, 1320, t + 0.06, 0.07, "square", 0.03);
+      blip(a, 660, t, 0.08, "sine", 0.035);
+      blip(a, 990, t + 0.07, 0.12, "sine", 0.03);
       break;
     case "error":
-      blip(a, 220, t, 0.09, "sawtooth", 0.03);
-      break;
-    case "boot":
-      blip(a, 660, t, 0.06, "sine", 0.05);
-      blip(a, 990, t + 0.08, 0.1, "sine", 0.05);
+      blip(a, 240, t, 0.12, "triangle", 0.04);
       break;
   }
 }
