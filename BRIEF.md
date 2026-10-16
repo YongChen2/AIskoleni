@@ -15,7 +15,7 @@ Všechny texty piš vlastní, česky, prodejně, bez AI frází.
 - Framer Motion + GSAP (ScrollTrigger) + Lenis smooth scroll
 - React Three Fiber + drei (3D hero)
 - MDX blog
-- Vercel AI SDK + Anthropic API (živé AI demo) – klíč v `.env.local`, `.env.example` commitnout
+- AI demo bez živého API (předgenerované odpovědi, viz UPGRADE-3) – klíče jen pro Resend v `.env.local`, `.env.example` commitnout
 - Resend (formulář) – klíč v env
 - Deploy Vercel, repo GitHub: https://github.com/YongChen2/AIskoleni
 
@@ -27,7 +27,7 @@ Všechny texty piš vlastní, česky, prodejně, bez AI frází.
    - 3D hero (drátěná „neuronová“ síť reagující na myš, HUD rámeček – viz DESIGN.md), silný claim + CTA „Domluvit školení“
    - Problém → řešení (lidé AI mají, ale neumí ji použít na vlastní práci)
    - 3 formáty školení (karty, scroll animace)
-   - **Živé AI demo**: návštěvník vybere roli (obchod / administrativa / management / marketing) + napíše úkol → AI vrátí ukázkový výstup a hotový prompt. Rate limit (např. 5 dotazů/IP/den).
+   - **AI demo (předgenerované, bez API)**: návštěvník vybere roli (obchod / administrativa / management / marketing) a jeden ze 3 úkolů → ukázkový výstup ve 2 variantách a hotový prompt ke zkopírování. Obsah v `src/content/demo.ts`.
    - **Kalkulačka úspory**: počet lidí × hodiny týdně na rutině × hodinová sazba → ušetřený čas a peníze za rok (animovaná čísla)
    - Reference/čísla (placeholder), FAQ, závěrečné CTA
 2. **/skoleni** Formáty
@@ -58,7 +58,7 @@ Všechny texty piš vlastní, česky, prodejně, bez AI frází.
 1. Init projektu, závislosti, brand config, layout, navigace, footer → commit
 2. Úvod (bez 3D) + /skoleni → build → commit
 3. 3D hero, scroll animace → commit
-4. AI demo (API route + rate limit), kalkulačka → commit
+4. AI demo (původně API route + rate limit, od UPGRADE-3 předgenerované), kalkulačka → commit
 5. Semafor, kvíz, nástroje → commit
 6. Blog MDX, o nás, kontakt + Resend, právní stránky, 404 → commit
 7. SEO, OG, JSON-LD, optimalizace, `npm run build` bez chyb a varování → commit

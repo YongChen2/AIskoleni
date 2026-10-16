@@ -53,7 +53,6 @@ export default function Page() {
             <ul>
               <li>Vercel Inc. – hosting webu.</li>
               <li>Resend – doručení e-mailů z kontaktního formuláře.</li>
-              <li>Anthropic – zpracování textu zadaného do živého AI dema (nevkládejte do něj osobní údaje).</li>
               <li>[DOPLNIT] účetní, další zpracovatelé.</li>
             </ul>
           ),

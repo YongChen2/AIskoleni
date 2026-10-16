@@ -82,11 +82,11 @@ Pravidla:
   - bílé body s nízkou opacitou, pár akcentních uzlů se září
   - za sítí radiální akcentní záře
   - síť nesmí odvádět pozornost od nadpisu
-- **AI demo:** produktová karta ve stylu okna aplikace:
-  - nahoře tři tečky a záložky rolí „Obchod / Administrativa / Management / Marketing“
-  - textové pole jako chat composer
-  - streamovaný výstup
-  - mono písmo jen uvnitř výstupu a promptu
+- **AI demo:** produktová karta ve stylu okna aplikace, odpovědi jsou předgenerované (`src/content/demo.ts`):
+  - nahoře tři tečky, název „AI asistent“ a štítek „Ukázka“; pod tím záložky rolí „Obchod / Administrativa / Management / Marketing“
+  - výběr ze 3 úkolů jako chipy, přepínač „A / B“ mezi dvěma variantami výstupu
+  - simulovaný stream (~2 s, klik = celé hned, reduced motion = hned celé); výška je rezervovaná, nic neposkakuje
+  - hotový prompt v mono písmu, tlačítko „Kopírovat prompt“ s toastem „Zkopírováno“
 - **Kalkulačka:** čisté zaoblené slidery vlevo, výsledek ve velké kartě se zářivým okrajem a animovaným číslem.
 - **Semafor, kvíz, časová osa:** stejná funkce, moderní karty a jemné barevné odznaky (zelená / oranžová / červená).
 - **404:** čistá stránka s mini hrou v kartě.

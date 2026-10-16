@@ -10,11 +10,8 @@ export function DemoFrame({ children, right, className }: { children: React.Reac
           <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
           <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
         </span>
-        <span className="flex-1 truncate text-center text-[13px] font-medium text-muted">AI asistent · ukázka</span>
-        <span className="flex items-center gap-3">
-          <span className="badge badge-success badge-dot hidden sm:inline-flex">Online</span>
-          {right}
-        </span>
+        <span className="flex-1 truncate text-center text-[13px] font-medium text-muted">AI asistent</span>
+        <span className="flex min-w-[4.5rem] justify-end">{right}</span>
       </div>
       {children}
     </div>

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { DemoFrame } from "./demo-frame";
 
-const DemoTerminal = dynamic(() => import("./demo-terminal"), {
+const DemoShowcase = dynamic(() => import("./demo-showcase"), {
   ssr: false,
   loading: () => <DemoSkeleton />,
 });
@@ -38,5 +38,5 @@ export function DemoLoader() {
     return () => io.disconnect();
   }, []);
 
-  return <div ref={ref}>{show ? <DemoTerminal /> : <DemoSkeleton />}</div>;
+  return <div ref={ref}>{show ? <DemoShowcase /> : <DemoSkeleton />}</div>;
 }

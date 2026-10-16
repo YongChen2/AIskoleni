@@ -1,14 +1,7 @@
-import { Redis } from "@upstash/redis";
-
 /**
- * Jednoduchý denní limit podle klíče (IP).
- * S Upstash Redis (Vercel Marketplace) je limit sdílený mezi všemi instancemi.
- * Bez něj spadne na paměť instance – pro produkci nespolehlivé, ale funkční.
+ * Jednoduchý denní limit podle klíče (IP) v paměti instance – ochrana kontaktního formuláře proti spamu.
+ * Na Vercelu (Fluid Compute) se instance sdílí mezi požadavky, limit tedy není přesný, ale stačí.
  */
-
-const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
-const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
-const redis = url && token ? new Redis({ url, token }) : null;
 
 const memory = new Map<string, { count: number; day: string }>();
 
@@ -20,14 +13,6 @@ function today() {
 
 export async function rateLimit(key: string, limit: number): Promise<RateLimitResult> {
   const day = today();
-
-  if (redis) {
-    const k = `rl:${key}:${day}`;
-    const count = await redis.incr(k);
-    if (count === 1) await redis.expire(k, 60 * 60 * 26);
-    return { ok: count <= limit, remaining: Math.max(0, limit - count), limit };
-  }
-
   const entry = memory.get(key);
   const count = entry && entry.day === day ? entry.count + 1 : 1;
   memory.set(key, { count, day });
