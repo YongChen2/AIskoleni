@@ -3,30 +3,43 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
+// desktop: R3F + three.js; mobil: odlehčené čisté WebGL (stejná síť, zlomek JS)
 const NeuralCanvas = dynamic(() => import("./neural-canvas"), { ssr: false, loading: () => null });
+const NeuralLite = dynamic(() => import("./neural-lite"), { ssr: false, loading: () => null });
 
-/** 3D jen na desktopu s WebGL a bez reduced-motion. Načte se až po dokončení načítání stránky. */
-function can3d() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  if (!window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches) return false;
+type Mode = "static" | "desktop" | "mobile";
+
+/** 3D s WebGL a bez reduced-motion; na dotykových zařízeních odlehčená verze. Načte se až po LCP (idle). */
+function detect(): Mode {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "static";
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    if (!(c.getContext("webgl2") || c.getContext("webgl"))) return "static";
   } catch {
-    return false;
+    return "static";
   }
+  return window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches ? "desktop" : "mobile";
 }
 
 export function HeroVisual({ fallback }: { fallback: React.ReactNode }) {
-  const [enable3d, setEnable3d] = useState(false);
+  const [mode, setMode] = useState<Mode>("static");
 
   useEffect(() => {
-    if (!can3d()) return;
-    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
-    const cancel = window.cancelIdleCallback ?? window.clearTimeout;
-    const id = idle(() => setEnable3d(true), { timeout: 2500 });
-    return () => cancel(id);
+    const m = detect();
+    if (m === "static") return;
+    const run = () => setMode(m);
+    // po LCP a v klidu
+    const delay = 0;
+    let id: number | undefined;
+    const t = window.setTimeout(() => {
+      if (typeof window.requestIdleCallback === "function") id = window.requestIdleCallback(run, { timeout: 2500 });
+      else run();
+    }, delay);
+    return () => {
+      clearTimeout(t);
+      if (id !== undefined) window.cancelIdleCallback?.(id);
+    };
   }, []);
 
-  return <div className="absolute inset-0">{enable3d ? <NeuralCanvas /> : fallback}</div>;
+  return <div className="absolute inset-0">{mode === "static" ? fallback : mode === "mobile" ? <NeuralLite /> : <NeuralCanvas />}</div>;
 }

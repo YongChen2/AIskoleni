@@ -1,5 +1,6 @@
 import { ButtonLink, Corners } from "@/components/ui";
 import { brand } from "@/config/brand";
+import { SensorButton } from "@/components/hero3d/sensor-button";
 
 const meta: [string, string][] = [
   ["Formát", "Prezenčně / online"],
@@ -23,6 +24,10 @@ export function Hero({ visual }: { visual?: React.ReactNode }) {
           </span>
           <span className="hidden sm:inline">UNIT / {brand.code}-01 · {brand.revision}</span>
           <span data-hud-coords>X 0000 · Y 0000</span>
+        </div>
+
+        <div className="absolute right-3 top-12 z-10 lg:hidden">
+          <SensorButton />
         </div>
 
         <div className="flex min-h-[inherit] flex-col justify-end gap-10 px-3 pb-6 pt-16 md:px-5 md:pb-8">
