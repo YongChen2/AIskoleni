@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/json-ld";
 import { brand } from "@/config/brand";
 import { CtaBlock } from "@/components/cta-block";
 import { ArrowLeft } from "@/components/icons";
+import { PostCover } from "@/components/blog/post-cover";
 import { Badge } from "@/components/ui";
 import { formatDate, getPost, posts } from "@/content/blog/posts";
 
@@ -48,6 +49,9 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
             </div>
             <h1 className="mt-6 text-[clamp(2.25rem,4.6vw,3.75rem)] font-semibold leading-[1.06] tracking-[-0.04em]">{post.title}</h1>
             <p className="lead mt-6">{post.description}</p>
+            {post.cover ? (
+              <PostCover src={post.cover.src} alt={post.cover.alt} sizes="(min-width: 768px) 704px, calc(100vw - 40px)" className="mt-10" />
+            ) : null}
             <div className="divider my-12" />
             <div className="article text-[17px] leading-[1.75] text-muted md:text-[18px]">
               <Body />

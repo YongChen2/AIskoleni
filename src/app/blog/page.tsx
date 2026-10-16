@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "@/components/icons";
-import { Badge, PageHero, Section } from "@/components/ui";
+import { PostCover } from "@/components/blog/post-cover";
+import { Badge, PageHero, Section, cx } from "@/components/ui";
 import { formatDate, posts } from "@/content/blog/posts";
 
 export const metadata: Metadata = {
@@ -34,13 +35,20 @@ export default function BlogPage() {
                     <time dateTime={p.date}>{formatDate(p.date)}</time> · {p.readingMinutes} min čtení
                   </span>
                 </div>
-                <div className="md:col-span-8">
+                {p.cover ? (
+                  <PostCover
+                    src={p.cover.src}
+                    sizes="(min-width: 1200px) 356px, (min-width: 768px) 30vw, calc(100vw - 88px)"
+                    className="md:order-last md:col-span-4"
+                  />
+                ) : null}
+                <div className={cx(p.cover ? "md:col-span-5" : "md:col-span-8")}>
                   <h2 className="text-[clamp(1.35rem,2.2vw,1.75rem)] font-semibold leading-[1.2] tracking-[-0.03em] text-fg">{p.title}</h2>
                   <p className="body mt-3 text-[15px]">{p.description}</p>
                 </div>
                 <ArrowUpRight
                   size={20}
-                  className="hidden justify-self-end text-subtle transition-[transform,color] duration-300 ease-[var(--ease)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg md:col-span-1 md:block"
+                  className={cx("hidden justify-self-end text-subtle transition-[transform,color] duration-300 ease-[var(--ease)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg md:col-span-1 md:block", p.cover && "md:hidden!")}
                 />
               </Link>
             </li>

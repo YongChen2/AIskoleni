@@ -6,6 +6,8 @@ export type Post = {
   date: string;
   readingMinutes: number;
   tag: string;
+  /** Titulní obrázek (public/images/<cover>-<šířka>.avif|.webp); bez něj se článek obejde */
+  cover?: { src: string; alt: string };
 };
 
 export const posts: Post[] = [
@@ -17,6 +19,10 @@ export const posts: Post[] = [
     date: "2026-09-08",
     readingMinutes: 5,
     tag: "Obchod",
+    cover: {
+      src: "/images/blog-5-uloh-obchod",
+      alt: "Řada průhledných karet propojených červenou linkou – navazující úlohy obchodníka",
+    },
   },
   {
     slug: "co-nikdy-nedavat-do-chatgpt",
