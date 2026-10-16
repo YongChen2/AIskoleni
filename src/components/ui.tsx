@@ -54,7 +54,7 @@ export function SectionHead({
 }) {
   const e = eyebrow;
   return (
-    <div className={cx(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
+    <div data-reveal-block className={cx(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
       {e ? <Eyebrow>{e}</Eyebrow> : null}
       {title ? <h2 className={cx("display-2", e ? "mt-5" : null)}>{title}</h2> : null}
       {lead ? <p className={cx("lead mt-5", align === "center" && "mx-auto")}>{lead}</p> : null}

@@ -12,7 +12,7 @@ export function DemoSection() {
         title="Zkuste si to na vlastním úkolu"
         lead={`Vyberte roli a zadejte úkol, který dnes řešíte. Dostanete ukázkový výstup a hlavně prompt, který si můžete uložit. Limit ${DEMO_DAILY_LIMIT} dotazů denně.`}
       />
-      <div className="relative mx-auto mt-14 max-w-5xl md:mt-16">
+      <div data-reveal-block className="relative mx-auto mt-14 max-w-5xl md:mt-16">
         <DemoLoader />
       </div>
     </Section>

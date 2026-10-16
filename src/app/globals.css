@@ -275,12 +275,14 @@ p {
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
+    translate: var(--mx, 0px) var(--my, 0px);
     transition:
       background-color 0.25s var(--ease),
       border-color 0.25s var(--ease),
       color 0.25s var(--ease),
       box-shadow 0.25s var(--ease),
-      transform 0.25s var(--ease);
+      transform 0.25s var(--ease),
+      translate 0.35s var(--ease);
   }
   .btn:active {
     transform: scale(0.98);
@@ -517,6 +519,21 @@ html.lenis body {
 }
 .lenis.lenis-stopped {
   overflow: clip;
+}
+
+/* Reveal: skrývá se jen obsah pod ohybem a až po hydrataci (motion-provider) → nad ohybem nic nebliká */
+[data-reveal-state="hidden"] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+}
+[data-reveal-state="shown"] {
+  opacity: 1;
+  transform: none;
+  will-change: opacity, transform;
+  transition:
+    opacity 0.65s var(--ease),
+    transform 0.65s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 /* Přechod mezi stránkami – jen při klientské navigaci, jemný fade */

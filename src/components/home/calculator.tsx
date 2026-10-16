@@ -128,15 +128,15 @@ export function Calculator() {
         lead="Posuňte jezdce podle svého týmu. Výsledek je orientační – reálné číslo změříme po školení na vašich úlohách."
       />
 
-      <div className="mt-14 grid gap-4 md:mt-20 lg:grid-cols-12">
-        <div className="card space-y-7 p-6 md:p-8 lg:col-span-5">
+      <div className="mt-14 grid gap-4 md:mt-20 lg:grid-cols-12" data-reveal-group>
+        <div data-reveal className="card space-y-7 p-6 md:p-8 lg:col-span-5">
           <Slider id={ids.people} label="Počet lidí" unit="osob" value={people} min={1} max={500} step={1} onChange={setPeople} />
           <Slider id={ids.hours} label="Rutina týdně na osobu" unit="h" value={hours} min={1} max={20} step={1} onChange={setHours} />
           <Slider id={ids.rate} label="Hodinová sazba" unit="Kč" value={rate} min={200} max={2500} step={50} onChange={setRate} />
           <Slider id={ids.share} label="Část rutiny, kterou AI zrychlí" unit="%" value={share} min={10} max={50} step={5} onChange={setShare} />
         </div>
 
-        <div className="card-glow relative isolate flex flex-col overflow-hidden p-6 md:p-10 lg:col-span-7">
+        <div data-reveal className="card-glow relative isolate flex flex-col overflow-hidden p-6 md:p-10 lg:col-span-7">
           <div aria-hidden className="glow -z-10 -right-40 -top-40 h-[30rem] w-[30rem]" />
           <p className="text-[15px] text-muted">Hodnota práce, kterou AI zrychlí za rok</p>
           <p className="mt-3 whitespace-nowrap text-[clamp(2.75rem,6.5vw,5.25rem)] font-semibold leading-none tracking-[-0.045em] text-fg [contain:layout_paint]">
