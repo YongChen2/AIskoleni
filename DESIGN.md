@@ -126,6 +126,10 @@ Plynulost má přednost.
 - **Přechody stránek:** jemný fade 200 ms.
 - **Mikrointerakce:** hover glow, magnetická tlačítka (jen desktop), `:active` scale.
   Easing je vždy custom cubic-bezier, nikdy `linear` ani `ease-in-out`.
+- **Běžící pás nástrojů:** dvě řady opačným směrem, CSS `translateX`, rovnoměrný (lineární) pohyb je u nekonečného
+  pásu jediná výjimka z pravidla custom easingu. Mimo viewport pauza, na hover zpomalení na 25 %, reduced motion = statický.
+- **Velká čísla:** odpočet od 0 při vstupu do viewportu (`power3.out`, 1,6 s, jednou), `tabular-nums`. Číslo nad
+  ohybem se nenuluje. Bez zdroje zůstává `[DOPLNIT]`.
 - **Zakázáno:**
   - blikání, stepped easing, clip-path odkrývání, glitch, dešifrování textu
   - nekonečné mikroanimace

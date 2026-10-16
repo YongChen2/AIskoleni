@@ -15,7 +15,8 @@ Propisuje se do hlavičky, patičky, kontaktu, JSON-LD i OG obrázků.
 - [ ] Logo/ikona – `src/components/logo.tsx` a `src/app/icon.svg`
 
 ## 2. Úvodní stránka – `src/content/site.ts`
-- [ ] Čísla v sekci Reference: počet proškolených lidí, počet firem, hodnocení účastníků
+- [ ] Velká čísla v sekci Výsledky (`stats`): počet proškolených lidí a průměr ušetřených hodin týdně na člověka –
+  jen se zdrojem (např. z reportů po školení). Hodnota se na webu sama odpočítá od 0, formát např. `1 250+` nebo `4,5`.
 - [ ] Dvě reference klientů (citace, jméno, pozice, firma) – se souhlasem klienta
 - [ ] FAQ „Kolik školení stojí?“ – orientační ceník, nebo smazat poznámku
 

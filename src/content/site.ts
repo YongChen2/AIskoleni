@@ -165,10 +165,12 @@ export const faq = [
   },
 ];
 
+/** Velká čísla v sekci Proof. Hodnota se při vstupu do viewportu odpočítá od 0 (umí i „6–12“, „4,8 / 5“, „1 250+“).
+ * Vymyšlená čísla nepoužívat – co nemá zdroj, zůstává [DOPLNIT]. */
 export const stats = [
   { value: "[DOPLNIT]", label: "proškolených lidí", note: "číslo doplnit" },
-  { value: "[DOPLNIT]", label: "firem a týmů", note: "číslo doplnit" },
-  { value: "[DOPLNIT]", label: "hodnocení účastníků", note: "např. 4,8 / 5" },
+  { value: "[DOPLNIT]", label: "hodin týdně ušetřených na člověka", note: "jen se zdrojem, např. průměr z reportů po školení" },
+  { value: "6–12", label: "lidí ve skupině", note: "aby se každý dostal ke slovu" },
   { value: "4", label: "nástroje, které školíme", note: "ChatGPT · Claude · Copilot · Gemini" },
 ];
 

@@ -1,3 +1,4 @@
+import { CountUp } from "@/components/fx/count-up";
 import { Badge, Section, SectionHead } from "@/components/ui";
 import { stats, testimonials } from "@/content/site";
 
@@ -8,14 +9,14 @@ export function Proof() {
     <Section theme="light">
       <SectionHead title="Výsledky, které jdou změřit" lead="Po každém školení vedení dostane report. Tady jsou souhrnná čísla a hlas klientů." />
 
-      <dl className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line md:mt-20 lg:grid-cols-4" data-reveal-group>
+      <dl className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 md:mt-20 lg:grid-cols-4" data-reveal-group>
         {stats.map((s) => (
-          <div key={s.label} data-reveal className="flex flex-col bg-surface p-5 md:p-7">
-            <dt className="order-2 mt-3 text-[15px] text-muted">{s.label}</dt>
-            <dd className="order-1 text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-none tracking-[-0.04em] text-fg">
-              {missing(s.value) ? <span className="text-subtle">—</span> : s.value}
+          <div key={s.label} data-reveal className="flex flex-col border-t border-line-strong pt-6">
+            <dt className="order-2 mt-4 text-[16px] font-medium text-fg">{s.label}</dt>
+            <dd className="order-1 text-[clamp(3.25rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-fg">
+              {missing(s.value) ? <span className="text-subtle">—</span> : <CountUp value={s.value} />}
             </dd>
-            <dd className="order-3 mt-4">
+            <dd className="order-3 mt-3">
               {missing(s.value) ? (
                 <Badge tone="warning" dot className="h-auto whitespace-normal py-1 leading-snug">
                   [DOPLNIT] {s.note}
@@ -28,7 +29,7 @@ export function Proof() {
         ))}
       </dl>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
+      <div className="mt-16 grid gap-4 md:mt-24 md:grid-cols-2">
         {testimonials.map((t, i) => (
           <figure key={i} className="card flex flex-col p-6 md:p-8">
             <svg width="28" height="20" viewBox="0 0 28 20" aria-hidden className="text-accent-hover">

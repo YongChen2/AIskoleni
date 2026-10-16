@@ -10,11 +10,13 @@ import { HeroVisual } from "@/components/hero3d/hero-visual";
 import { StaticNetwork } from "@/components/hero3d/static-network";
 import { Problem } from "@/components/home/problem";
 import { Proof } from "@/components/home/proof";
+import { ToolsMarquee } from "@/components/home/tools-marquee";
 
 export default function Home() {
   return (
     <>
       <Hero visual={<HeroVisual fallback={<StaticNetwork className="h-full w-full lg:translate-x-[16%]" />} />} />
+      <ToolsMarquee />
       <Problem />
       <Formats />
       <DemoSection />

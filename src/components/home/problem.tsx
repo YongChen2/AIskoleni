@@ -17,7 +17,7 @@ const solutions = [
 
 export function Problem() {
   return (
-    <Section theme="light">
+    <Section theme="light" className="pt-16! lg:pt-24!">
       <SectionHead
         title={
           <>
