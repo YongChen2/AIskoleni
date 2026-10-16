@@ -106,7 +106,7 @@ export default function NeuralLite() {
     const pulses = layer(Array.from(pulseData), new Array(PULSES).fill(0), true);
     const pulseState = Array.from({ length: PULSES }, (_, i) => ({ edge: (i * 53) % net.edges.length, t: i / PULSES, speed: 0.6 + ((i * 7) % 5) * 0.15 }));
 
-    const col = { line: rgb(brand.colors.line), fg: rgb(brand.colors.fg), accent: rgb(brand.colors.accent) };
+    const col = { line: rgb(brand.colors.borderSolid), fg: rgb(brand.colors.fg), accent: rgb(brand.colors.accent) };
     const dpr = Math.min(1.5, window.devicePixelRatio || 1);
 
     let proj = perspective(1);

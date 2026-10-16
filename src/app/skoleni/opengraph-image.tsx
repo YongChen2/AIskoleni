@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
-  return renderOg({ title: "Tři kroky od zvědavosti k rutině", code: "SEC.10", label: "Formáty školení" });
+  return renderOg({ title: "Tři kroky od zvědavosti k rutině", label: "Formáty školení" });
 }

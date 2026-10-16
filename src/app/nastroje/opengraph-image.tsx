@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
-  return renderOg({ title: "ChatGPT · Claude · Copilot · Gemini", code: "SEC.30", label: "Srovnání nástrojů" });
+  return renderOg({ title: "ChatGPT · Claude · Copilot · Gemini", label: "Srovnání nástrojů" });
 }

@@ -12,5 +12,5 @@ export function generateStaticParams() {
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getPost(slug);
-  return renderOg({ title: post?.title ?? "Blog", code: "LOG", label: post?.tag ?? "Blog" });
+  return renderOg({ title: post?.title ?? "Blog", label: post?.tag ?? "Blog" });
 }

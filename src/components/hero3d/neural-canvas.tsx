@@ -63,7 +63,7 @@ function Network({ input, count, dpr }: { input: React.RefObject<Input>; count: 
     const accentGeo = geometry(net.accent.flatMap((i) => net.nodes[i]), net.accent.map(seed));
     const pulseGeo = geometry(new Array(PULSES * 3).fill(0), new Array(PULSES).fill(0));
     const mats = {
-      line: material(brand.colors.line, 1, dpr),
+      line: material(brand.colors.borderSolid, 1, dpr),
       node: material(brand.colors.fg, 2.2, dpr),
       accent: material(brand.colors.accent, 6, dpr),
       pulse: material(brand.colors.accent, 3.5, dpr),

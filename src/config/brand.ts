@@ -25,16 +25,23 @@ export const brand = {
   },
 
   colors: {
-    bg: "#0A0A0A",
-    bg2: "#121212",
-    fg: "#EAEAEA",
-    muted: "#8A8A8A",
-    line: "#2A2A2A",
-    accent: "#FF2A2A",
-    signal: "#4AF626",
-    /** Pouze tenké značky v datovém semaforu (/bezpecnost) */
-    trafficGreen: "#3DBA4E",
-    trafficOrange: "#FF9A1F",
+    bg: "#08090B",
+    /** Povrchy karet (1. a 2. úroveň) */
+    surface: "#0E1014",
+    surface2: "#13161B",
+    /** Okraje – průhledná bílá, aby seděly na jakémkoli povrchu */
+    border: "rgba(255,255,255,0.08)",
+    borderStrong: "rgba(255,255,255,0.14)",
+    /** Neprůhledný ekvivalent `border` na pozadí (WebGL, OG obrázky) */
+    borderSolid: "#1C1D1F",
+    fg: "#F2F3F5",
+    muted: "#9BA1AB",
+    subtle: "#5D636D",
+    accent: "#FF3B3B",
+    accentHover: "#FF5A4F",
+    /** Stavové odznaky (semafor, kvíz, online stav dema) – jen jemně, ne plochy */
+    success: "#3DD68C",
+    warning: "#F5A524",
   },
 } as const;
 
@@ -49,10 +56,15 @@ export const nav = [
 
 export const brandCssVars = {
   "--bg": brand.colors.bg,
-  "--bg-2": brand.colors.bg2,
+  "--surface": brand.colors.surface,
+  "--surface-2": brand.colors.surface2,
+  "--line": brand.colors.border,
+  "--line-strong": brand.colors.borderStrong,
   "--fg": brand.colors.fg,
   "--muted": brand.colors.muted,
-  "--line": brand.colors.line,
+  "--subtle": brand.colors.subtle,
   "--accent": brand.colors.accent,
-  "--signal": brand.colors.signal,
+  "--accent-hover": brand.colors.accentHover,
+  "--success": brand.colors.success,
+  "--warning": brand.colors.warning,
 } as React.CSSProperties;

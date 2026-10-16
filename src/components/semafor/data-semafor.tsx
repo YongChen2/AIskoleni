@@ -9,8 +9,8 @@ import { play } from "@/lib/sound";
 type Zone = "green" | "orange" | "red";
 
 const zones: { id: Zone; label: string; rule: string; mark: string }[] = [
-  { id: "green", label: "Zelená", rule: "Můžete vložit do běžného nástroje", mark: brand.colors.trafficGreen },
-  { id: "orange", label: "Oranžová", rule: "Jen ve firemní licenci, ideálně anonymizovaně", mark: brand.colors.trafficOrange },
+  { id: "green", label: "Zelená", rule: "Můžete vložit do běžného nástroje", mark: brand.colors.success },
+  { id: "orange", label: "Oranžová", rule: "Jen ve firemní licenci, ideálně anonymizovaně", mark: brand.colors.warning },
   { id: "red", label: "Červená", rule: "Do AI nástroje nepatří", mark: brand.colors.accent },
 ];
 

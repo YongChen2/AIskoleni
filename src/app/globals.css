@@ -2,28 +2,42 @@
 
 /* Výchozí hodnoty – přepisuje je brand.ts přes inline style na <html> */
 :root {
-  --bg: #0a0a0a;
-  --bg-2: #121212;
-  --fg: #eaeaea;
-  --muted: #8a8a8a;
-  --line: #2a2a2a;
-  --accent: #ff2a2a;
-  --signal: #4af626;
+  --bg: #08090b;
+  --surface: #0e1014;
+  --surface-2: #13161b;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --fg: #f2f3f5;
+  --muted: #9ba1ab;
+  --subtle: #5d636d;
+  --accent: #ff3b3b;
+  --accent-hover: #ff5a4f;
+  --success: #3dd68c;
+  --warning: #f5a524;
   color-scheme: dark;
 }
 
 @theme inline {
   --color-bg: var(--bg);
-  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  /* přechodné aliasy starých tokenů (odstraní se s přestavbou komponent) */
+  --color-bg-2: var(--surface);
+  --color-signal: var(--success);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
-  --color-line: var(--line);
+  --color-subtle: var(--subtle);
   --color-accent: var(--accent);
-  --color-signal: var(--signal);
-  --font-display: var(--font-display), "Inter", system-ui, sans-serif;
+  --color-accent-hover: var(--accent-hover);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-display: var(--font-sans), system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
-  --font-serif: var(--font-serif), Georgia, serif;
-  --radius-none: 0;
+  --font-serif: var(--font-sans), system-ui, sans-serif;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 *,
@@ -212,8 +226,8 @@ body::after {
   }
 
   .signal-glow {
-    color: var(--signal);
-    text-shadow: 0 0 6px var(--signal);
+    color: var(--success);
+    text-shadow: 0 0 6px var(--success);
   }
 
   .cursor-block {

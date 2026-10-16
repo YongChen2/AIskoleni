@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
-  return renderOg({ title: "Licence máte. Výsledky zatím ne.", code: "SEC.00", label: "Firemní školení AI" });
+  return renderOg({ title: "Licence máte. Výsledky zatím ne.", label: "Firemní školení AI" });
 }

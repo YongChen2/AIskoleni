@@ -7,16 +7,17 @@ export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 const fonts = Promise.all([
-  readFile(join(process.cwd(), "assets/fonts/ArchivoBlack-Regular.ttf")),
-  readFile(join(process.cwd(), "assets/fonts/JetBrainsMono-Medium.ttf")),
+  readFile(join(process.cwd(), "assets/fonts/Geist-SemiBold.ttf")),
+  readFile(join(process.cwd(), "assets/fonts/Geist-Regular.ttf")),
+  readFile(join(process.cwd(), "assets/fonts/GeistMono-Medium.ttf")),
 ]);
 
-/** Sdílená OG šablona v duchu Tactical Telemetry. */
-export async function renderOg({ title, code, label }: { title: string; code: string; label: string }) {
-  const [display, mono] = await fonts;
+/** Sdílená OG šablona – tmavá karta s jemnou akcentní září (viz DESIGN.md). */
+export async function renderOg({ title, label }: { title: string; label: string }) {
+  const [semi, regular, mono] = await fonts;
   const c = brand.colors;
   const len = title.length;
-  const size = len > 40 ? 76 : len > 24 ? 96 : 124;
+  const size = len > 40 ? 64 : len > 24 ? 76 : 92;
 
   return new ImageResponse(
     (
@@ -27,27 +28,15 @@ export async function renderOg({ title, code, label }: { title: string; code: st
           display: "flex",
           flexDirection: "column",
           background: c.bg,
+          backgroundImage: `radial-gradient(circle at 85% 0%, rgba(255,59,59,0.22), rgba(255,59,59,0) 55%)`,
           color: c.fg,
-          fontFamily: "Mono",
-          padding: 40,
+          fontFamily: "Geist",
+          padding: 72,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: 20,
-            letterSpacing: 2,
-            color: c.muted,
-            borderBottom: `1px solid ${c.line}`,
-            paddingBottom: 16,
-          }}
-        >
-          <div style={{ display: "flex" }}>
-            <span style={{ color: c.accent }}>{code}</span>
-            <span style={{ marginLeft: 12 }}>{`/// [ ${label.toUpperCase()} ]`}</span>
-          </div>
-          <span>UNIT / {brand.code}-01 · {brand.revision}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 14, height: 14, borderRadius: 7, background: c.accent }} />
+          <span style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>{brand.name}</span>
         </div>
 
         <div
@@ -55,44 +44,51 @@ export async function renderOg({ title, code, label }: { title: string; code: st
             display: "flex",
             flex: 1,
             alignItems: "flex-end",
-            fontFamily: "Display",
             fontSize: size,
-            lineHeight: 0.9,
-            letterSpacing: -3,
-            textTransform: "uppercase",
-            paddingBottom: 36,
+            fontWeight: 600,
+            lineHeight: 1.04,
+            letterSpacing: -size * 0.04,
+            maxWidth: 980,
+            paddingBottom: 40,
           }}
         >
           {title}
         </div>
 
-        <div style={{ display: "flex", height: 8, background: c.accent }} />
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            paddingTop: 20,
+            borderTop: `1px solid ${c.borderSolid}`,
+            paddingTop: 28,
             fontSize: 24,
-            letterSpacing: 2,
+            color: c.muted,
           }}
         >
-          <span style={{ fontFamily: "Display", fontSize: 32, letterSpacing: -1 }}>
-            {brand.name.toUpperCase()}
-            <span style={{ color: c.accent }}>{brand.mark}</span>
+          <span
+            style={{
+              display: "flex",
+              fontFamily: "Mono",
+              fontSize: 18,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              border: `1px solid ${c.borderSolid}`,
+              borderRadius: 999,
+              padding: "8px 18px",
+            }}
+          >
+            {label}
           </span>
-          <div style={{ display: "flex", gap: 3, height: 36 }}>
-            {Array.from({ length: 34 }, (_, i) => (
-              <div key={i} style={{ width: [2, 1, 3, 1, 2, 4][i % 6], height: 36, background: c.fg }} />
-            ))}
-          </div>
+          <span style={{ fontWeight: 400 }}>{new URL(brand.url).host}</span>
         </div>
       </div>
     ),
     {
       ...ogSize,
       fonts: [
-        { name: "Display", data: display, weight: 400, style: "normal" },
+        { name: "Geist", data: semi, weight: 600, style: "normal" },
+        { name: "Geist", data: regular, weight: 400, style: "normal" },
         { name: "Mono", data: mono, weight: 500, style: "normal" },
       ],
     }
