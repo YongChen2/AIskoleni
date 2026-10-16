@@ -539,13 +539,31 @@ p {
 }
 
 /* ---------- Barevná prostředí (UPGRADE-4) ----------
- * Tokeny pro [data-theme] generuje brand.ts (themeCss). Pás [data-band] má bez JS vlastní pozadí;
- * s ThemeBackdrop je průhledný a barvu dodává pevná vrstva pod obsahem (prolínání podle scrollu). */
+ * Tokeny pro [data-theme] generuje brand.ts (themeCss). Pás [data-band] má vždy plné vlastní pozadí.
+ * Přechod podle scrollu (ThemeBackdrop): ::before v barvě předchozího pásu nad pozadím a pod obsahem,
+ * opacity = --band-fade (nedědí se → změna nepřepočítává styly potomků). */
+@property --band-fade {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
 [data-band] {
+  position: relative;
+  isolation: isolate;
   background-color: var(--bg);
 }
-html[data-backdrop] body,
-html[data-backdrop] [data-band] {
+[data-band][data-fade]::before {
+  --band-fade: inherit;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--band-from);
+  opacity: var(--band-fade);
+  will-change: opacity;
+}
+html[data-backdrop] body {
   background-color: transparent;
 }
 

@@ -252,3 +252,75 @@ INP (nejhorší interakce): mobil 40 → **64 ms**, desktop 32 → **48 ms** (st
 | INP < 150 ms | ≤ 64 ms | splněno |
 | 60 fps při scrollu | 59,7–60 fps | splněno |
 | Kontrast textu přes video ≥ AA | perex 6,1–6,5 : 1, štítky 5,0 : 1, akcentní nadpis ≥ 3,0 : 1 (98. percentil jasu pozadí v 6 snímcích smyčky) | splněno |
+
+## 5. Po UPGRADE-4 (barvy podle scrollu, wow sekce)
+
+Stejná metodika, srovnání proti stavu po UPGRADE-3 (část 4). Úvod je teď výrazně delší (desktop ~16 900 px
+místo ~8 300 px): pás nástrojů, galerie use-casů s pinem, scrollytelling školicího dne s pinem a velká čísla.
+
+### Lighthouse mobil – simulované throttling
+
+| Stránka | Perf | A11y | LCP | TBT | CLS | JS (KB) |
+|---|---|---|---|---|---|---|
+| `/` | 96 → **97** | 100 → **100** | 2777 ms → **2632 ms** | 6 ms → **21 ms** | 0 → **0** | 242 → **254** |
+| `/skoleni` | 97 → **97** | 100 → **100** | 2616 ms → **2633 ms** | 12 ms → **12 ms** | 0 → **0** | 197 → **208** |
+| `/bezpecnost` | 98 → **98** | 100 → **100** | 2467 ms → **2471 ms** | 7 ms → **8 ms** | 0 → **0** | 197 → **208** |
+| `/nastroje` | 98 → **97** | 100 → **100** | 2466 ms → **2621 ms** | 12 ms → **7 ms** | 0 → **0** | 198 → **210** |
+| `/kontakt` | 96 → **96** | 100 → **100** | 2780 ms → **2769 ms** | 23 ms → **13 ms** | 0 → **0** | 197 → **208** |
+
+LCP prvek je na všech stránkách text (perex nebo nadpis), stejně jako v části 4.
+
+### Lighthouse mobil – reálné throttling (Slow 4G + CPU 4×)
+
+| Stránka | Perf | LCP | CLS |
+|---|---|---|---|
+| `/` | 99 → **99** | 1588 ms → **1645 ms** | 0 → **0** |
+| `/skoleni` | 99 → **99** | 1563 ms → **1610 ms** | 0 → **0** |
+| `/bezpecnost` | 99 → **99** | 1591 ms → **1619 ms** | 0,001 → **0,001** |
+| `/kviz` | 99 → **99** | 1567 ms → **1594 ms** | 0 → **0** |
+| `/kontakt` | 99 → **99** | 1568 ms → **1601 ms** | 0 → **0** |
+
+### Lighthouse desktop
+Performance 100 a přístupnost 100 na všech pěti stránkách, LCP 541–593 ms, TBT 0 ms, CLS 0.
+
+### Scroll přes celý úvod při CPU 4× (piny galerie a školicího dne, 3D morph, barevné přechody)
+
+| Režim | Odscrollováno | fps | p95 snímku | Dlouhé snímky | CLS při načtení / scrollu |
+|---|---|---|---|---|---|
+| desktop (Lenis) | 16 198 px | **59,9** | 16,8 ms | 0,1 % | 0 / 0,0002 |
+| mobil (dotyk) | 14 076 px | **59,3** | 16,7 ms | 0,6 % | 0 / 0 |
+
+Sada z předchozích částí (`/`, `/skoleni`, `/bezpecnost`, první obrazovky scrollu): 59,7–60 fps, CLS 0.
+INP (nejhorší interakce): mobil 64 → **80 ms**, desktop 48 → **32 ms** (rozpočet 150 ms).
+
+### Kontrast
+- axe-core (`color-contrast`) po celé výšce 11 stránek ve 2 šířkách, se živou barevnou vrstvou: **0 problémů**.
+- Opraveno během auditu:
+  - Neaktivní kroky školicího dne byly tlumené přes opacity 0,42 (kontrast 1,8–2,8 : 1). Teď mají barvu
+    `--subtle` (5 : 1).
+  - V accent theme je `--tint` černý, takže aktivní odkaz v hlavičce nad červenou má AA.
+  - Mobilní lišta je nad papírem z 94 % neprůhledná.
+- První verze prolínání (pevná vrstva pod průhlednými pásy) mátla Lighthouse i axe: počítaly kontrast proti
+  tmavému pozadí `<html>`, takže přístupnost úvodu vycházela 96. Teď mají pásy vždy plné vlastní pozadí
+  a prolnutí dělá `::before` uvnitř pásu. Přístupnost je 100 a čtečky i audit vidí skutečné barvy.
+
+### Kontrola rozpočtu
+
+| Požadavek | Výsledek | Stav |
+|---|---|---|
+| Lighthouse mobil Performance ≥ 90 | 96–98 (simulované), 99 (reálné throttling) | splněno |
+| CLS < 0,05 | 0–0,001 (načtení), ≤ 0,0002 (scroll přes piny) | splněno |
+| 60 fps při scrollu přes piny | 59,9 (desktop), 59,3 (mobil) | splněno |
+| INP < 150 ms | ≤ 80 ms | splněno |
+| Animace jen transform / opacity | prolínání barev (opacity `::before`), marquee (transform), galerie (transform), fáze školicího dne (transform/opacity, kruh z dílků místo `stroke-dashoffset`), tilt (transform), slova (transform/opacity); morph sítě běží v shaderu | splněno |
+| Nic nebliká | 11 stránek × 2 šířky: nic nad ohybem se neskrylo, po scrollu nic nezůstalo skryté | splněno |
+| Žádné nové externí assety | vše v kódu (SVG ilustrace, procedurální žárovka, typografie) | splněno |
+
+### Co v UPGRADE-4 stojí výkon a jak je to ošetřené
+- **+12 KB JS na stránku:** theme vrstva, marquee, odpočty a tilt jsou v layoutu, galerie a školicí den jen na úvodu.
+  ScrollTrigger se načítá líně se sdíleným motion jádrem.
+- **Barevné přechody:** v každém snímku se mění jen `--band-fade` na jednom až dvou pásech. Vlastnost je registrovaná
+  přes `@property` jako nedědičná, takže se nepřepočítávají styly potomků. `::before` má `will-change: opacity`.
+- **Piny:** pinne se vnitřní blok sekce, spacer zůstává uvnitř barevného pásu. Po `refresh` ScrollTriggeru
+  se pásy přeměří (`theme:refresh`).
+- **Marquee:** CSS animace transformu. Mimo viewport se pozastaví, na hover se zpomalí přes `playbackRate` (bez re-renderu).

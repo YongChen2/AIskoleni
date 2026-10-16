@@ -46,11 +46,13 @@ Tři theme přes `data-theme` na sekci; tokeny pro všechna tři generuje `brand
 | stín karty (`--shadow-card`) | tmavý difuzní | `0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06)` | jemný |
 
 - `--tint` je barva jemných překryvů (`bg-tint/[0.06]` místo `bg-white/…`), v light je tmavá.
-- **Dramaturgie úvodu:** hero (dark) → problém, formáty (light) → AI demo (dark) → kalkulačka, čísla, FAQ (light)
-  → CTA (accent) → patička (dark). Podstránky: hero dark, obsah light, CTA accent.
-- **Plynulý přechod:** pás = sekce s `data-band`. `ThemeBackdrop` drží pod obsahem pevnou vrstvu se třemi plochami
-  a prolíná jen jejich opacity, zatímco hranice pásů jede od 80 % do 50 % výšky viewportu. Bez JS má každý pás
-  vlastní pozadí. Hlavička přebírá theme pásu pod sebou.
+- **Dramaturgie úvodu:** hero (dark) → pás nástrojů, problém, formáty, galerie use-casů, školicí den (light)
+  → AI demo (dark) → kalkulačka, čísla, FAQ (light) → CTA (accent) → patička (dark).
+  Podstránky: hero dark, obsah light, CTA accent. AI demo a vizuál školicího dne jsou tmavé panely ve světlé sekci.
+- **Plynulý přechod:** pás = prvek s `data-band` a vždy plným vlastním pozadím (kontrast sedí i pro audit
+  a čtečky). Přijíždějící pás má nad pozadím a pod obsahem `::before` v barvě předchozího pásu; `ThemeBackdrop`
+  mu podle scrollu snižuje opacity (`--band-fade`, registrovaná a nedědí se), zatímco horní hranice jede od spodní
+  hrany viewportu do 70 % jeho výšky. Hlavička přebírá theme pásu pod sebou.
 
 ## Typografie
 - **Font:** Geist (sans) pro nadpisy i text, Geist Mono jen na drobné štítky, čísla, kód a AI terminál.

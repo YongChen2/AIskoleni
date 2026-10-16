@@ -246,11 +246,17 @@ export function TrainingDay() {
                   <li
                     key={s.time}
                     aria-current={i === step ? "step" : undefined}
-                    className="flex items-baseline gap-4 py-2 transition-opacity duration-300"
-                    style={{ opacity: i === step ? 1 : 0.42 }}
+                    className="flex items-baseline gap-4 py-2"
                   >
-                    <time className={cx("mono w-12 shrink-0 text-[13px]", i === step ? "text-accent-hover" : "text-subtle")}>{s.time}</time>
-                    <span className="text-[19px] font-semibold tracking-[-0.02em] text-fg">{s.title}</span>
+                    {/* neaktivní kroky tlumí barva --subtle (5 : 1), ne opacity – kontrast drží AA */}
+                    <time className={cx("mono w-12 shrink-0 text-[13px] transition-colors duration-300", i === step ? "text-accent-hover" : "text-subtle")}>
+                      {s.time}
+                    </time>
+                    <span
+                      className={cx("text-[19px] font-semibold tracking-[-0.02em] transition-colors duration-300", i === step ? "text-fg" : "text-subtle")}
+                    >
+                      {s.title}
+                    </span>
                   </li>
                 ))}
               </ol>
