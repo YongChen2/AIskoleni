@@ -26,6 +26,34 @@ export const LAYERS = {
   pulse: { color: brand.colors.accent, opacity: 0.9, size: 9, soft: 1 },
 } as const;
 
+const smooth = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
+/**
+ * Průběh scrollu z hera (s = scrollY / výška hera) → fáze sítě:
+ * 0,03–0,28 složení do žárovky (uMorph), 0,40–0,70 rozpad (rozprostření + zmizení) během přechodu na světlou sekci.
+ * `LIFT` = jaká část scrollu se vyrovná posunem skupiny nahoru (parallax) → žárovka zůstane ve viditelné části plátna.
+ * Hrany během morphu slábnou (spojnice sousedů ze sítě by přes žárovku vedly křížem).
+ */
+export const LIFT = 0.65;
+
+export function phase(s: number) {
+  const morph = smooth(0.03, 0.28, s);
+  const dis = smooth(0.4, 0.7, s);
+  return {
+    morph,
+    spread: dis * MOTION.spread * 1.6,
+    alpha: 1 - dis,
+    edgeAlpha: (1 - 0.85 * morph) * (1 - dis),
+    /** žárovka: větší a jasnější body, aby tvar byl čitelný i přes video */
+    nodeSize: 1 + 0.45 * morph,
+    nodeBoost: 1 + 0.7 * morph,
+    pulses: morph < 0.05,
+  };
+}
+
 /** Mlha: blízko (depth ≤ near) plná opacita, daleko (≥ far) jen `min`. */
 export const FOG = { near: 4.5, far: 11, min: 0.12 };
 

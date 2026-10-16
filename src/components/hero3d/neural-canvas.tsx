@@ -5,22 +5,28 @@ import { PerformanceMonitor } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { onTick } from "@/lib/motion";
-import { createNetwork } from "./network";
-import { ACCENT_COUNT, FOG_GLSL, FRAG, LAYERS, MOTION, seed } from "./look";
+import { createBulb, createNetwork } from "./network";
+import { ACCENT_COUNT, FOG_GLSL, FRAG, LAYERS, LIFT, MOTION, phase, seed } from "./look";
 
-type Input = { x: number; y: number; spread: number };
+/** výška plátna ve světových jednotkách v rovině z = 0 (kamera z 7,5, fov 50°) */
+const WORLD_H = 2 * 7.5 * Math.tan((25 * Math.PI) / 180);
+
+type Input = { x: number; y: number; scroll: number };
 type Layer = (typeof LAYERS)[keyof typeof LAYERS];
 
 const PULSES = 10;
 
-/* Body i hrany sdílí shader: rozprostření při odjezdu z hera počítá GPU (uSpread × náhodný faktor uzlu). */
+/* Body i hrany sdílí shader: morph do žárovky (mix k aTarget podle uMorph) a rozprostření při rozpadu počítá GPU. */
 const vert = /* glsl */ `
   attribute float aSeed;
+  attribute vec3 aTarget;
   uniform float uSpread;
+  uniform float uMorph;
   uniform float uSize;
   varying float vFade;
   void main() {
-    vec3 p = position + normalize(position + vec3(0.0001)) * uSpread * aSeed;
+    vec3 b = mix(position, aTarget, uMorph);
+    vec3 p = b + normalize(b + vec3(0.0001)) * uSpread * aSeed;
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     ${FOG_GLSL}
     gl_Position = projectionMatrix * mv;
@@ -40,6 +46,7 @@ function material(l: Layer, dpr: number, point: boolean) {
     blendDst: THREE.OneFactor,
     uniforms: {
       uSpread: { value: 0 },
+      uMorph: { value: 0 },
       uSize: { value: l.size * dpr },
       uColor: { value: new THREE.Color(l.color) },
       uOpacity: { value: l.opacity },
@@ -49,10 +56,11 @@ function material(l: Layer, dpr: number, point: boolean) {
   });
 }
 
-function geometry(points: number[], seeds: number[]) {
+function geometry(points: number[], seeds: number[], targets: number[] = points) {
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
   g.setAttribute("aSeed", new THREE.Float32BufferAttribute(seeds, 1));
+  g.setAttribute("aTarget", new THREE.Float32BufferAttribute(targets, 3));
   return g;
 }
 
@@ -63,12 +71,14 @@ function Network({ input, count, dpr }: { input: React.RefObject<Input>; count: 
 
   const parts = useMemo(() => {
     const accent = net.accent.slice(0, ACCENT_COUNT);
-    const nodeGeo = geometry(net.nodes.flat(), net.nodes.map((_, i) => seed(i)));
+    const bulb = createBulb(net, 1.15);
+    const nodeGeo = geometry(net.nodes.flat(), net.nodes.map((_, i) => seed(i)), bulb.flat());
     const edgeGeo = geometry(
       net.edges.flatMap(([a, b]) => [...net.nodes[a], ...net.nodes[b]]),
-      net.edges.flatMap(([a, b]) => [seed(a), seed(b)])
+      net.edges.flatMap(([a, b]) => [seed(a), seed(b)]),
+      net.edges.flatMap(([a, b]) => [...bulb[a], ...bulb[b]])
     );
-    const accentGeo = geometry(accent.flatMap((i) => net.nodes[i]), accent.map(seed));
+    const accentGeo = geometry(accent.flatMap((i) => net.nodes[i]), accent.map(seed), accent.flatMap((i) => bulb[i]));
     const pulseGeo = geometry(new Array(PULSES * 3).fill(0), new Array(PULSES).fill(0));
     const mats = {
       edge: material(LAYERS.edge, dpr, false),
@@ -106,13 +116,22 @@ function Network({ input, count, dpr }: { input: React.RefObject<Input>; count: 
     g.rotation.x += (p.y * MOTION.tiltX - g.rotation.x) * k;
     g.rotation.z += (-p.x * MOTION.tiltZ - g.rotation.z) * k;
     g.position.x += (2.4 + p.x * MOTION.shift - g.position.x) * Math.min(1, delta * 1.5);
+    // plátno = celé hero → posun o −s × WORLD_H drží skupinu na místě (proti scrollu); LIFT z toho vyrovná jen část
+    g.position.y = -p.scroll * WORLD_H * LIFT;
 
-    // mírné rozprostření sítě při odjezdu z hera (uniform → GPU)
-    const spread = p.spread * MOTION.spread;
-    for (const m of Object.values(parts.mats)) m.uniforms.uSpread.value = spread;
+    // scroll z hera: složení do žárovky → rozpad (uniformy → GPU); reduced motion 3D vůbec nenačte (statická síť)
+    const ph = phase(p.scroll);
+    for (const [k, m] of Object.entries(parts.mats)) {
+      const l = LAYERS[k as keyof typeof LAYERS];
+      const node = k === "node";
+      m.uniforms.uSpread.value = ph.spread;
+      m.uniforms.uMorph.value = ph.morph;
+      m.uniforms.uOpacity.value = Math.min(1, l.opacity * (node ? ph.nodeBoost : 1)) * (k === "edge" ? ph.edgeAlpha : ph.alpha);
+      m.uniforms.uSize.value = l.size * dpr * (node ? ph.nodeSize : 1);
+    }
 
-    // signály putující po hranách – při rozpadu mizí
-    pts.visible = p.spread < 0.35;
+    // signály putující po hranách – jen v podobě sítě
+    pts.visible = ph.pulses;
     const pos = pts.geometry.attributes.position as THREE.BufferAttribute;
     pulseState.current.forEach((s, i) => {
       s.t += delta * s.speed;
@@ -143,7 +162,7 @@ function Network({ input, count, dpr }: { input: React.RefObject<Input>; count: 
 
 /** Desktop verze (R3F + three.js). Mobil používá `neural-lite.tsx`. */
 export default function NeuralCanvas({ onReady }: { onReady?: () => void }) {
-  const input = useRef<Input>({ x: 0, y: 0, spread: 0 });
+  const input = useRef<Input>({ x: 0, y: 0, scroll: 0 });
   const wrap = useRef<HTMLDivElement>(null);
   const [maxDpr, setMaxDpr] = useState(1.75);
   const [deviceDpr] = useState(() => (typeof window === "undefined" ? 1 : window.devicePixelRatio || 1));
@@ -178,7 +197,7 @@ export default function NeuralCanvas({ onReady }: { onReady?: () => void }) {
       const i = input.current;
       i.x += (pointer.x - i.x) * 0.05;
       i.y += (pointer.y - i.y) * 0.05;
-      i.spread = Math.min(1, Math.max(0, window.scrollY / heroH));
+      i.scroll = Math.max(0, window.scrollY / heroH);
       // R3F s frameloop="never" bere čas v SEKUNDÁCH (onTick dává ms) – jinak síť rotuje ~1000× rychleji
       advance(time / 1000);
       if (++frames === 2) onReady?.();

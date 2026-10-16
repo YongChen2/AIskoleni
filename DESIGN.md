@@ -109,6 +109,10 @@ Tři theme přes `data-theme` na sekci; tokeny pro všechna tři generuje `brand
   - video se spouští až v idle po načtení stránky a kreslí se do `<canvas>` (není kandidát LCP), přehrává jen ve viewportu;
     reduced motion, Save-Data a 2g/3g = jen poster
   - 3D síť v hero zůstává nad videem se sníženou opacitou (85 %)
+- **3D morph:** při scrollu z hera se body sítě složí do drátěné žárovky („nápad“), pak se rozprostřou a zmizí
+  během přechodu na světlou sekci. Cílové pozice jsou atribut `aTarget` (procedurálně v `network.ts`), mix řeší
+  shader přes `uMorph`; skupina se posouvá proti scrollu (parallax `LIFT`), aby tvar zůstal v plátně. Mobil má
+  méně bodů a stejný efekt, reduced motion = statická SVG síť.
 - **AI demo:** produktová karta ve stylu okna aplikace, odpovědi jsou předgenerované (`src/content/demo.ts`):
   - nahoře tři tečky, název „AI asistent“ a štítek „Ukázka“; pod tím záložky rolí „Obchod / Administrativa / Management / Marketing“
   - výběr ze 3 úkolů jako chipy, přepínač „A / B“ mezi dvěma variantami výstupu
