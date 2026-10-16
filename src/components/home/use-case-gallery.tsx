@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { ArrowRight } from "@/components/icons";
 import { useCases, type UseCase } from "@/content/use-cases";
 import { loadEngine, prefersReducedMotion } from "@/lib/motion";
+import { splitWords } from "@/components/ui";
 
 /** Drobná linková ilustrace (stroke 1.5, akcent jen na jednom prvku) */
 function Illo({ kind }: { kind: UseCase["illo"] }) {
@@ -172,7 +173,11 @@ export function UseCaseGallery() {
         <div className="shell flex flex-wrap items-end justify-between gap-6">
           <div data-reveal-block className="max-w-2xl">
             <h2 id="usecases-title" className="display-2">
-              Co AI zvládne <span className="hl">za vás</span>
+              {splitWords(
+                <>
+                  Co AI zvládne <span className="hl">za vás</span>
+                </>
+              )}
             </h2>
             <p className="lead mt-5">Deset úloh, které na školeních převádíme z hodin na minuty. Každá role má svoje.</p>
           </div>

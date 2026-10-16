@@ -11,6 +11,7 @@ const idle = (cb: () => void) => {
 
 const REVEAL = "[data-reveal], [data-reveal-block]";
 const STAGGER = 70;
+const WORD_STAGGER = 45;
 
 /**
  * Reveal: fade + posun 20 px, jednou. Bez rAF smyčky – IntersectionObserver přepne atribut, animaci dělá CSS
@@ -47,14 +48,17 @@ function setupReveal(): () => void {
         batch.set(group, n + 1);
         if (group) el.style.setProperty("--reveal-delay", `${Math.min(n, 5) * STAGGER}ms`);
         el.setAttribute("data-reveal-state", "shown");
+        // nadpis po slovech (.word) běží déle než fade bloku → stav uklidit až po posledním slově
+        const words = el.querySelectorAll(".word").length;
+        const tail = words ? Math.min(words, 14) * WORD_STAGGER + 300 : 0;
         const onEnd = (ev: TransitionEvent) => {
           if (ev.target !== el) return; // přechody potomků (hover apod.) ignorovat
           el.removeEventListener("transitionend", onEnd);
-          clean(el);
+          setTimeout(() => clean(el), tail);
         };
         el.addEventListener("transitionend", onEnd);
         // pojistka, kdyby transitionend nepřišel (např. skrytý tab)
-        setTimeout(() => clean(el), 1400);
+        setTimeout(() => clean(el), 1400 + tail);
       }
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.01 }
@@ -98,7 +102,56 @@ function setupMagnetic(): () => void {
   };
 }
 
-/** Lenis, kotvy, reset scrollu po navigaci, reveal animace a magnetická tlačítka. */
+/**
+ * Jemný 3D tilt karet ve světlých sekcích (jen myš, max. 4°). Delegovaný pointermove, jeden zápis transformu
+ * na snímek; vlastní přechod drží i původní přechody karty (okraj, stín).
+ */
+function setupTilt(): () => void {
+  const MAX = 4;
+  const T = "transform 0.25s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease)";
+  let card: HTMLElement | null = null;
+  let raf = 0;
+  let pos = { x: 0, y: 0 };
+  const release = () => {
+    const c = card;
+    card = null;
+    if (!c) return;
+    c.style.transition = T.replace("0.25s", "0.6s");
+    c.style.transform = "";
+    setTimeout(() => c !== card && (c.style.transition = ""), 650);
+  };
+  const apply = () => {
+    raf = 0;
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    const dx = (pos.x - r.left) / r.width - 0.5;
+    const dy = (pos.y - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(900px) rotateX(${(-dy * MAX * 2).toFixed(2)}deg) rotateY(${(dx * MAX * 2).toFixed(2)}deg)`;
+  };
+  const onMove = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    const el = (e.target as Element).closest?.<HTMLElement>(".card");
+    const ok = el && el.closest("[data-theme]")?.getAttribute("data-theme") === "light" && !el.closest("[data-reveal-state]");
+    if (el !== card || !ok) release();
+    if (!ok) return;
+    if (card !== el) {
+      card = el;
+      card.style.transition = T;
+    }
+    pos = { x: e.clientX, y: e.clientY };
+    if (!raf) raf = requestAnimationFrame(apply);
+  };
+  document.addEventListener("pointermove", onMove, { passive: true });
+  document.addEventListener("pointerleave", release);
+  return () => {
+    cancelAnimationFrame(raf);
+    release();
+    document.removeEventListener("pointermove", onMove);
+    document.removeEventListener("pointerleave", release);
+  };
+}
+
+/** Lenis, kotvy, reset scrollu po navigaci, reveal animace, magnetická tlačítka a tilt karet. */
 export function MotionProvider() {
   const pathname = usePathname();
 
@@ -149,7 +202,12 @@ export function MotionProvider() {
 
   useEffect(() => {
     if (prefersReducedMotion() || !hasFinePointer()) return;
-    return setupMagnetic();
+    const a = setupMagnetic();
+    const b = setupTilt();
+    return () => {
+      a();
+      b();
+    };
   }, []);
 
   return null;

@@ -134,6 +134,10 @@ Plynulost má přednost.
   pásu jediná výjimka z pravidla custom easingu. Mimo viewport pauza, na hover zpomalení na 25 %, reduced motion = statický.
 - **Velká čísla:** odpočet od 0 při vstupu do viewportu (`power3.out`, 1,6 s, jednou), `tabular-nums`. Číslo nad
   ohybem se nenuluje. Bez zdroje zůstává `[DOPLNIT]`.
+- **Nadpisy sekcí po slovech:** `splitWords()` (ui.tsx) obalí slova do `.word`, při odhalení bloku najíždějí se
+  staggerem 45 ms (max. 14 slov). U `.hl` nese gradient každé slovo.
+- **Tilt karet:** jen karty ve světlých sekcích, jen myš, max. 4°, `perspective(900px)`; po odjetí se plynule vrátí.
+- **Přebarvení mezi theme:** odkazy, tlačítka a hlavička mění barvy přechodem 200 ms.
 - **Zakázáno:**
   - blikání, stepped easing, clip-path odkrývání, glitch, dešifrování textu
   - nekonečné mikroanimace

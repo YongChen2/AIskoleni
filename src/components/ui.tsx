@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import { Children, cloneElement, isValidElement, type ComponentProps, type ReactElement, type ReactNode } from "react";
 import type { ThemeName } from "@/config/brand";
 import { ArrowRight } from "./icons";
 import { VideoBackground } from "./video-background";
@@ -38,7 +38,38 @@ export function Eyebrow({ children, className }: { children: ReactNode; classNam
   return <p className={cx("eyebrow", className)}>{children}</p>;
 }
 
-/** Hlavička sekce: volitelný eyebrow, nadpis H2 a perex. */
+/**
+ * Rozdělí nadpis na slova (`.word`, index v `--w`) pro reveal po slovech. Zachová vnořené prvky;
+ * u zvýraznění `.hl` dostane gradient každé slovo zvlášť (background-clip: text na rodiči by posunutá slova neořízl).
+ */
+export function splitWords(node: ReactNode, hl = false, counter = { i: 0 }): ReactNode {
+  return Children.map(node, (child) => {
+    if (typeof child === "string" || typeof child === "number") {
+      return String(child)
+        .split(/(\s+)/)
+        .map((part, k) =>
+          /^\s+$/.test(part) || !part ? (
+            part
+          ) : (
+            <span key={k} className={cx("word", hl && "hl")} style={{ "--w": counter.i++ } as React.CSSProperties}>
+              {part}
+            </span>
+          )
+        );
+    }
+    if (isValidElement(child)) {
+      const el = child as ReactElement<{ className?: string; children?: ReactNode }>;
+      const isHl = /(^|\s)hl(\s|$)/.test(el.props.className ?? "");
+      return cloneElement(el, {
+        className: isHl ? el.props.className!.replace(/(^|\s)hl(?=\s|$)/, "").trim() || undefined : el.props.className,
+        children: splitWords(el.props.children, hl || isHl, counter),
+      });
+    }
+    return child;
+  });
+}
+
+/** Hlavička sekce: volitelný eyebrow, nadpis H2 (reveal po slovech) a perex. */
 export function SectionHead({
   eyebrow,
   title,
@@ -58,7 +89,7 @@ export function SectionHead({
   return (
     <div data-reveal-block className={cx(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
       {e ? <Eyebrow>{e}</Eyebrow> : null}
-      {title ? <h2 className={cx("display-2", e ? "mt-5" : null)}>{title}</h2> : null}
+      {title ? <h2 className={cx("display-2", e ? "mt-5" : null)}>{splitWords(title)}</h2> : null}
       {lead ? <p className={cx("lead mt-5", align === "center" && "mx-auto")}>{lead}</p> : null}
       {children}
     </div>

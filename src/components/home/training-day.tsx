@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { timeline, type TimelineEntry } from "@/content/site";
 import { loadEngine, prefersReducedMotion } from "@/lib/motion";
-import { cx } from "@/components/ui";
+import { cx, splitWords } from "@/components/ui";
 
 /** Pět fází vizuálu → záznamy ze sdílené časové osy (/skoleni) */
 const STAGE_TIMES = ["09:00", "10:30", "11:15", "14:15", "15:00"] as const;
@@ -217,7 +217,11 @@ export function TrainingDay() {
     <div data-reveal-block>
       <p className="eyebrow">Školicí den</p>
       <h2 className="display-2 mt-5">
-        Jak probíhá <span className="hl">jeden den</span>
+        {splitWords(
+          <>
+            Jak probíhá <span className="hl">jeden den</span>
+          </>
+        )}
       </h2>
     </div>
   );
