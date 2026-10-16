@@ -42,9 +42,11 @@ const overlays = {
 
 /**
  * Smyčkové video na pozadí (public/video, viz scripts/video.sh).
- * SSR vykreslí jen překryv; <video> se vloží až v idle po načtení. Přehrává (play) jen ve viewportu, mimo něj pause –
- * místo atributu autoplay, aby se video mimo obrazovku vůbec nestahovalo.
- * Mobil (< 768 px) dostane výřez na výšku `-m`.
+ * - SSR vykreslí jen překryv; video se spustí až v idle po načtení stránky.
+ * - <video> není v DOM, snímky se kreslí do <canvas>. Canvas není kandidát LCP → LCP zůstává nadpis
+ *   (viditelný <video> i jeho poster Chrome jako LCP započítá, i když se objeví později).
+ * - Přehrává se (play) jen ve viewportu, mimo něj pause – místo atributu autoplay, aby se video mimo obrazovku nestahovalo.
+ * - Mobil (< 768 px) dostane výřez na výšku `-m`. Reduced motion / Save-Data / 2g–3g = jen poster.
  */
 export function VideoBackground({
   src,
@@ -58,65 +60,96 @@ export function VideoBackground({
   className?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
-  const [mode, setMode] = useState<Mode | null>(null);
-  const [file, setFile] = useState<string>(src);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(
-    () =>
-      afterIdle(() => {
-        setFile(window.matchMedia("(max-width: 767.98px)").matches ? `${src}-m` : src);
-        setMode(pickMode());
-      }),
-    [src]
-  );
-
-  // Přehrávat jen ve viewportu
   useEffect(() => {
     const el = root.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => {
-      const v = video.current;
-      if (!v || mode !== "video") return;
-      if (e.isIntersecting) v.play().catch(() => {});
-      else v.pause();
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [mode]);
+    const cv = canvas.current;
+    const ctx = cv?.getContext("2d", { alpha: false });
+    if (!el || !cv || !ctx) return;
+    let video: HTMLVideoElement | null = null;
+    let io: IntersectionObserver | null = null;
+    let raf = 0;
+    let last = -1;
+    let dead = false;
 
-  // Poster bez videa: zobrazit až po načtení obrázku (plynulý fade, žádné probliknutí)
-  useEffect(() => {
-    if (mode !== "poster") return;
-    const img = new Image();
-    img.onload = () => setReady(true);
-    img.src = `/video/${file}.webp`;
-  }, [mode, file]);
+    const draw = (img: CanvasImageSource, w: number, h: number) => {
+      if (cv.width !== w || cv.height !== h) {
+        cv.width = w;
+        cv.height = h;
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+    };
+
+    // Kreslí jen nový snímek (smyčka běží, jen když video hraje)
+    const loop = () => {
+      if (!video) return;
+      if (video.currentTime !== last && video.readyState >= 2) {
+        last = video.currentTime;
+        draw(video, video.videoWidth, video.videoHeight);
+      }
+      raf = requestAnimationFrame(loop);
+    };
+
+    const cancel = afterIdle(() => {
+      const file = window.matchMedia("(max-width: 767.98px)").matches ? `${src}-m` : src;
+      const poster = new Image();
+      poster.decoding = "async";
+      poster.onload = () => {
+        if (dead || last >= 0) return;
+        draw(poster, poster.naturalWidth, poster.naturalHeight);
+        setReady(true);
+      };
+      poster.src = `/video/${file}.webp`;
+      if (pickMode() === "poster") return;
+
+      const v = document.createElement("video");
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = "none";
+      v.setAttribute("muted", "");
+      v.setAttribute("playsinline", "");
+      const canWebm = v.canPlayType('video/webm; codecs="vp9"') !== "";
+      v.src = `/video/${file}.${canWebm ? "webm" : "mp4"}`;
+      v.addEventListener("playing", () => {
+        setReady(true);
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(loop);
+      });
+      v.addEventListener("pause", () => cancelAnimationFrame(raf));
+      video = v;
+
+      io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) v.play().catch(() => {}); // např. úsporný režim iOS → zůstane poster
+        else v.pause();
+      });
+      io.observe(el);
+    });
+
+    return () => {
+      dead = true;
+      cancel();
+      io?.disconnect();
+      cancelAnimationFrame(raf);
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+    };
+  }, [src]);
 
   return (
     <div ref={root} aria-hidden className={cx("pointer-events-none absolute inset-0 overflow-hidden [--vb-tint:var(--bg)]", className)}>
-      {mode ? (
-        <video
-          ref={video}
-          key={file}
-          muted
-          loop
-          playsInline
-          preload="none"
-          poster={`/video/${file}.webp`}
-          onPlaying={() => setReady(true)}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ opacity: ready ? opacity : 0 }}
-        >
-          {mode === "video" ? (
-            <>
-              <source src={`/video/${file}.webm`} type="video/webm" />
-              <source src={`/video/${file}.mp4`} type="video/mp4" />
-            </>
-          ) : null}
-        </video>
-      ) : null}
+      <canvas
+        ref={canvas}
+        width={16}
+        height={9}
+        className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ opacity: ready ? opacity : 0 }}
+      />
       {/* vinětace + gradient z barvy pozadí → text drží kontrast AA */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,var(--vb-tint)_100%)]" />
       <div className={cx("absolute inset-0", overlays[overlay])} />

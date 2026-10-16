@@ -193,3 +193,62 @@ CLS při fontu zpožděném o 1,5 s: ≤ 0,0007 na 5 stránkách ve 2 šířkác
   obsah pod ohybem a až po hydrataci.
 - **Kontrast (přístupnost 96 → 100):** primární tlačítka mají `--accent-strong` #E0282D (bílá 4,66 : 1)
   a `--subtle` je zvednuté na #7D838D (~5 : 1).
+
+## 4. Po UPGRADE-3 (demo bez API, video pozadí)
+
+Stejná metodika, srovnání proti stavu po UPGRADE-2 (část 3). V simulované sadě je místo `/kviz` stránka `/nastroje`
+(nový sloupec Grok); `/kviz` je v sadě s reálným throttlingem.
+
+### Lighthouse mobil – simulované throttling
+
+| Stránka | Perf | A11y | LCP | TBT | CLS | LCP prvek |
+|---|---|---|---|---|---|---|
+| `/` | 97 → **96** | 100 → **100** | 2622 ms → **2777 ms** | 8 ms → **6 ms** | 0 → **0** | perex hero (text) |
+| `/skoleni` | 97 → **97** | 100 → **100** | 2621 ms → **2616 ms** | 15 ms → **12 ms** | 0 → **0** | perex (text) |
+| `/bezpecnost` | 97 → **98** | 100 → **100** | 2507 ms → **2467 ms** | 49 ms → **7 ms** | 0 → **0** | perex (text) |
+| `/nastroje` | – → **98** | – → **100** | – → **2466 ms** | – → **12 ms** | – → **0** | perex (text) |
+| `/kontakt` | 96 → **96** | 100 → **100** | 2689 ms → **2780 ms** | 74 ms → **23 ms** | 0 → **0** | perex (text) |
+
+### Lighthouse mobil – reálné throttling (Slow 4G + CPU 4×)
+
+| Stránka | Perf | LCP | CLS |
+|---|---|---|---|
+| `/` | 99 → **99** | 1570–1587 ms → **1588 ms** | 0 → **0** |
+| `/skoleni` | 99 → **99** | 1579–1586 ms → **1563 ms** | 0 → **0** |
+| `/bezpecnost` | 99 → **99** | 1573–1578 ms → **1591 ms** | 0,001 → **0,001** |
+| `/kviz` | 99 → **99** | 1564–1592 ms → **1567 ms** | 0 → **0** |
+| `/kontakt` | 99 → **99** | 1564–1567 ms → **1568 ms** | 0 → **0** |
+
+### Lighthouse desktop
+Performance 100 a přístupnost 100 na všech pěti stránkách, LCP 540–583 ms (nadpis nebo perex), TBT 0 ms, CLS 0.
+
+### Scroll při CPU 4× (s běžícím videem) a INP
+
+| Režim | Stránka | fps | Dlouhé snímky | CLS při scrollu |
+|---|---|---|---|---|
+| mobile | `/` | 59,9 → **59,7** | 0,2 % → **0,6 %** | 0 → **0** |
+| mobile | `/skoleni` | 60 → **60** | 0 % → **0 %** | 0 → **0** |
+| mobile | `/bezpecnost` | 60 → **59,9** | 0 % → **0,2 %** | 0 → **0** |
+| desktop | všechny tři | 60 → **60** | 0 % → **0 %** | 0 → **0** |
+
+INP (nejhorší interakce): mobil 40 → **64 ms**, desktop 32 → **48 ms** (stále hluboko pod 150 ms).
+
+### Video pozadí a LCP
+- **První verze (`<video>` v DOM, fade z opacity 0):** LCP prvkem bylo na všech stránkách video. Mobil LCP 3,0–3,3 s,
+  Performance 92–95, desktop `/` 99. Chrome započítá viditelné video i poster, i když se vloží až v idle po `load`
+  a objeví se až po přechodu opacity.
+- **Oprava:** `<video>` není v DOM, snímky se kreslí do `<canvas>` (jen při novém snímku a jen když video hraje).
+  Canvas není kandidát LCP → LCP je zase text (nadpis nebo perex) a čísla jsou na úrovni UPGRADE-2.
+- Video se spouští až v idle po `load`, přehrává se jen ve viewportu. Reduced motion, Save-Data a 2g/3g = jen poster
+  (3–14 KB), video se nestahuje. Desktop 373 KB (WebM), mobil 122 KB.
+
+### Kontrola rozpočtu
+
+| Požadavek | Výsledek | Stav |
+|---|---|---|
+| Lighthouse mobil Performance ≥ 90 | 96–98 (simulované), 99 (reálné throttling) | splněno |
+| LCP není video ani poster | LCP = text na všech 10 měřeních | splněno |
+| CLS < 0,05 | 0–0,001 | splněno |
+| INP < 150 ms | ≤ 64 ms | splněno |
+| 60 fps při scrollu | 59,7–60 fps | splněno |
+| Kontrast textu přes video ≥ AA | perex 6,1–6,5 : 1, štítky 5,0 : 1, akcentní nadpis ≥ 3,0 : 1 (98. percentil jasu pozadí v 6 snímcích smyčky) | splněno |
