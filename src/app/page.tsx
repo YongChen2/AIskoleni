@@ -12,6 +12,7 @@ import { Problem } from "@/components/home/problem";
 import { Proof } from "@/components/home/proof";
 import { ToolsMarquee } from "@/components/home/tools-marquee";
 import { UseCaseGallery } from "@/components/home/use-case-gallery";
+import { TrainingDay } from "@/components/home/training-day";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <Problem />
       <Formats />
       <UseCaseGallery />
+      <TrainingDay />
       <DemoSection />
       <Calculator />
       <Proof />
