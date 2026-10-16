@@ -14,7 +14,7 @@ import { Proof } from "@/components/home/proof";
 export default function Home() {
   return (
     <>
-      <Hero visual={<HeroVisual fallback={<StaticNetwork />} />} />
+      <Hero visual={<HeroVisual fallback={<StaticNetwork className="h-full w-full lg:translate-x-[16%]" />} />} />
       <Problem />
       <Formats />
       <DemoSection />

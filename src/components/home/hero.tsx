@@ -1,64 +1,59 @@
-import { ButtonLink } from "@/components/ui";
-import { brand } from "@/config/brand";
+import { Badge, ButtonLink } from "@/components/ui";
 import { SensorButton } from "@/components/hero3d/sensor-button";
 
 const meta: [string, string][] = [
-  ["Formát", "Prezenčně / online"],
+  ["Formát", "Prezenčně i online"],
   ["Skupina", "6–12 osob"],
   ["Jazyk", "Čeština"],
-  ["Nástroje", "ChatGPT · Claude · Copilot · Gemini"],
+  ["Výstup", "Report pro vedení"],
 ];
 
 export function Hero({ visual }: { visual?: React.ReactNode }) {
   return (
-    <section data-hud-code="SEC.00" data-hud-label="Řídicí panel" className="relative isolate overflow-hidden border-b border-line">
-      <div className="absolute inset-0 -z-10" aria-hidden>
+    <section className="relative isolate overflow-hidden">
+      {/* pozadí: jemná mřížka, akcentní záře a 3D síť (na desktopu vpravo, na mobilu nahoře a vyblednutá) */}
+      <div aria-hidden className="grid-bg absolute inset-0 -z-20" />
+      <div aria-hidden className="glow -z-20 right-[-20%] top-[-10%] h-[42rem] w-[42rem] lg:right-[-6%] lg:top-[4%] lg:h-[48rem] lg:w-[56rem]" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 -z-10 h-[62%] [mask-image:linear-gradient(to_bottom,black_45%,transparent)] lg:inset-y-0 lg:h-auto lg:[mask-image:linear-gradient(to_right,transparent_8%,black_42%)]"
+      >
         {visual}
       </div>
 
-      <div className="relative mx-4 my-4 min-h-[calc(100svh-5.5rem)] border border-line md:mx-8 md:my-8 md:min-h-[calc(100svh-10rem)]">
-        <div className="micro-xs flex flex-wrap justify-between gap-2 border-b border-line px-3 py-2 text-muted md:px-5">
-          <span>
-            <span className="text-accent">SEC.00</span> {"///"} [ ŘÍDICÍ PANEL ]
-          </span>
-          <span className="hidden sm:inline">UNIT / {brand.code}-01 · {brand.revision}</span>
-          <span data-hud-coords>X 0000 · Y 0000</span>
-        </div>
-
-        <div className="absolute right-3 top-12 z-10 lg:hidden">
+      <div className="shell relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-10 pt-40 md:pb-14 lg:min-h-[min(calc(100svh-var(--header-h)),56rem)] lg:justify-center lg:pt-16">
+        <div className="absolute right-3 top-3 z-10 lg:hidden">
           <SensorButton />
         </div>
 
-        <div className="flex min-h-[inherit] flex-col justify-end gap-10 px-3 pb-6 pt-16 md:px-5 md:pb-8">
-          <h1 className="macro">
+        <div className="max-w-[52rem]">
+          <Badge dot className="text-fg">
+            ChatGPT · Claude · Copilot · Gemini
+          </Badge>
+          <h1 className="display-1 mt-6">
             <span className="block">Licence máte.</span>
-            <span className="block text-accent">Výsledky</span>
-            <span className="block">zatím ne.</span>
+            <span className="hl block">Výsledky zatím ne.</span>
           </h1>
-
-          <div className="grid gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-6">
-              <p className="prose-body text-base md:text-lg">
-                Školíme firemní týmy, aby AI používaly na svou skutečnou práci: nabídky, e-maily, reporty a analýzy.
-                Podle rolí, na vašich úlohách a s jasnými pravidly pro data.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <ButtonLink href="/kontakt" accent>
-                  Domluvit školení
-                </ButtonLink>
-                <ButtonLink href="/#demo">Vyzkoušet AI demo</ButtonLink>
-              </div>
-            </div>
-            <dl className="micro grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 md:col-span-4 md:col-start-9">
-              {meta.map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="text-muted">{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
+          <p className="lead mt-6 max-w-[34rem]">
+            Školíme firemní týmy, aby AI používaly na skutečnou práci – podle rolí, na vašich úlohách a s jasnými pravidly
+            pro data.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <ButtonLink href="/kontakt" variant="primary">
+              Domluvit školení
+            </ButtonLink>
+            <ButtonLink href="/#demo">Vyzkoušet AI demo</ButtonLink>
           </div>
         </div>
+
+        <dl className="mt-14 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-line pt-6 sm:grid-cols-4 lg:mt-24">
+          {meta.map(([k, v]) => (
+            <div key={k}>
+              <dt className="label">{k}</dt>
+              <dd className="mt-1 text-[15px] text-fg">{v}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

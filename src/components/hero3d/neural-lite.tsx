@@ -1,36 +1,35 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { brand } from "@/config/brand";
 import { onTick } from "@/lib/motion";
+import { ACCENT_COUNT, FOG_GLSL, FRAG, LAYERS, MOTION, rgb, seed } from "./look";
 import { createNetwork } from "./network";
 import { initSensor, stopSensor, tilt } from "./sensor";
 
 /**
  * Odlehčená mobilní verze 3D sítě – čisté WebGL (pár KB místo three.js + R3F),
- * aby načtení nezatížilo hlavní vlákno. Stejná data, stejný shader, stejné vstupy (náklon / samovolné plutí / scroll).
+ * aby načtení nezatížilo hlavní vlákno. Stejná data, stejný vzhled (look.ts), stejné vstupy (náklon / samovolné plutí / scroll).
  */
 
 const COUNT = 220;
-const PULSES = 10;
+const PULSES = 8;
 const FOV = (50 * Math.PI) / 180;
-const CAM_Z = 9;
+const CAM_Z = 8;
 
 const VERT = `
 attribute vec3 aPos;
 attribute float aSeed;
-uniform mat4 uMVP;
+uniform mat4 uMV;
+uniform mat4 uP;
 uniform float uSpread;
 uniform float uSize;
+varying float vFade;
 void main() {
   vec3 p = aPos + normalize(aPos + vec3(0.0001)) * uSpread * aSeed;
-  gl_Position = uMVP * vec4(p, 1.0);
-  gl_PointSize = uSize;
+  vec4 mv = uMV * vec4(p, 1.0);
+  ${FOG_GLSL}
+  gl_Position = uP * mv;
 }`;
-const FRAG = `
-precision mediump float;
-uniform vec3 uColor;
-void main() { gl_FragColor = vec4(uColor, 1.0); }`;
 
 type M4 = Float32Array;
 
@@ -62,15 +61,14 @@ function model(rx: number, ry: number, rz: number, tx: number): M4 {
   return mul(T, mul(Rx, mul(Ry, Rz)));
 }
 
-const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-const seed = (i: number) => 0.4 + ((i * 2654435761) % 1000) / 650;
+type Layer = (typeof LAYERS)[keyof typeof LAYERS];
 
-export default function NeuralLite() {
+export default function NeuralLite({ onReady }: { onReady?: () => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const c = canvas.current;
-    const gl = c?.getContext("webgl", { antialias: false, alpha: true, powerPreference: "low-power", premultipliedAlpha: false });
+    const gl = c?.getContext("webgl", { antialias: false, alpha: true, powerPreference: "low-power" });
     if (!c || !gl) return;
 
     const sh = (type: number, src: string) => {
@@ -84,12 +82,19 @@ export default function NeuralLite() {
     gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
     gl.linkProgram(prog);
     gl.useProgram(prog);
+    // FRAG vrací předem vynásobenou barvu → aditivní míchání, bez hloubkového testu
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
     const aPos = gl.getAttribLocation(prog, "aPos");
     const aSeed = gl.getAttribLocation(prog, "aSeed");
-    const uMVP = gl.getUniformLocation(prog, "uMVP");
+    const uMV = gl.getUniformLocation(prog, "uMV");
+    const uP = gl.getUniformLocation(prog, "uP");
     const uSpread = gl.getUniformLocation(prog, "uSpread");
     const uSize = gl.getUniformLocation(prog, "uSize");
     const uColor = gl.getUniformLocation(prog, "uColor");
+    const uOpacity = gl.getUniformLocation(prog, "uOpacity");
+    const uSoft = gl.getUniformLocation(prog, "uSoft");
+    const uPoint = gl.getUniformLocation(prog, "uPoint");
 
     const net = createNetwork(COUNT);
     const buffer = (data: number[], dynamic = false) => {
@@ -101,12 +106,12 @@ export default function NeuralLite() {
     const layer = (pos: number[], seeds: number[], dynamic = false) => ({ pos: buffer(pos, dynamic), seed: buffer(seeds), n: seeds.length });
     const edges = layer(net.edges.flatMap(([a, b]) => [...net.nodes[a], ...net.nodes[b]]), net.edges.flatMap(([a, b]) => [seed(a), seed(b)]));
     const nodes = layer(net.nodes.flat(), net.nodes.map((_, i) => seed(i)));
-    const accents = layer(net.accent.flatMap((i) => net.nodes[i]), net.accent.map(seed));
+    const accentIdx = net.accent.slice(0, ACCENT_COUNT);
+    const accents = layer(accentIdx.flatMap((i) => net.nodes[i]), accentIdx.map(seed));
     const pulseData = new Float32Array(PULSES * 3);
     const pulses = layer(Array.from(pulseData), new Array(PULSES).fill(0), true);
-    const pulseState = Array.from({ length: PULSES }, (_, i) => ({ edge: (i * 53) % net.edges.length, t: i / PULSES, speed: 0.6 + ((i * 7) % 5) * 0.15 }));
+    const pulseState = Array.from({ length: PULSES }, (_, i) => ({ edge: (i * 53) % net.edges.length, t: i / PULSES, speed: 0.35 + ((i * 7) % 5) * 0.08 }));
 
-    const col = { line: rgb(brand.colors.borderSolid), fg: rgb(brand.colors.fg), accent: rgb(brand.colors.accent) };
     const dpr = Math.min(1.5, window.devicePixelRatio || 1);
 
     let proj = perspective(1);
@@ -122,15 +127,18 @@ export default function NeuralLite() {
     const ro = new ResizeObserver(resize);
     ro.observe(c);
 
-    const draw = (l: typeof edges, mode: number, color: number[], size: number) => {
+    const draw = (l: typeof edges, mode: number, look: Layer) => {
       gl.bindBuffer(gl.ARRAY_BUFFER, l.pos);
       gl.enableVertexAttribArray(aPos);
       gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, l.seed);
       gl.enableVertexAttribArray(aSeed);
       gl.vertexAttribPointer(aSeed, 1, gl.FLOAT, false, 0, 0);
-      gl.uniform3fv(uColor, color);
-      gl.uniform1f(uSize, size * dpr);
+      gl.uniform3fv(uColor, rgb(look.color));
+      gl.uniform1f(uOpacity, look.opacity);
+      gl.uniform1f(uSoft, look.soft);
+      gl.uniform1f(uPoint, mode === gl.POINTS ? 1 : 0);
+      gl.uniform1f(uSize, look.size * dpr);
       gl.drawArrays(mode, 0, l.n);
     };
 
@@ -141,34 +149,31 @@ export default function NeuralLite() {
 
     const s = { rx: 0, ry: 0, rz: 0, tx: 0, x: 0, y: 0 };
     let last = 0;
-    const coords = document.querySelector<HTMLElement>("[data-hud-coords]");
-    let lastLabel = "";
+    let frames = 0;
     const off = onTick((time) => {
       if (!visible) return;
       const dt = Math.min(0.05, last ? (time - last) / 1000 : 0.016);
       last = time;
       const t = time / 1000;
       const src = tilt.active ? tilt : { x: Math.sin(t * 0.3) * 0.5, y: Math.cos(t * 0.23) * 0.35 };
-      if (coords && tilt.active) {
-        const label = `TILT ${tilt.x.toFixed(2)} · ${tilt.y.toFixed(2)}`;
-        if (label !== lastLabel) coords.textContent = lastLabel = label;
-      }
       s.x += (src.x - s.x) * 0.08;
       s.y += (src.y - s.y) * 0.08;
-      const k = Math.min(1, dt * 3);
-      s.ry += dt * 0.04;
-      s.rx += (s.y * 0.35 - s.rx) * k;
-      s.rz += (-s.x * 0.12 - s.rz) * k;
-      s.tx += (s.x * 0.4 - s.tx) * Math.min(1, dt * 2);
+      const k = Math.min(1, dt * 2);
+      s.ry += dt * MOTION.spin;
+      s.rx += (s.y * MOTION.tiltX - s.rx) * k;
+      s.rz += (-s.x * MOTION.tiltZ - s.rz) * k;
+      s.tx += (s.x * MOTION.shift - s.tx) * Math.min(1, dt * 1.5);
       const spread = Math.min(1, Math.max(0, window.scrollY / Math.max(1, c.clientHeight)));
 
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniformMatrix4fv(uMVP, false, mul(proj, model(s.rx, s.ry, s.rz, s.tx)));
-      gl.uniform1f(uSpread, spread * 6);
-      draw(edges, gl.LINES, col.line, 1);
-      draw(nodes, gl.POINTS, col.fg, 2.2);
-      draw(accents, gl.POINTS, col.accent, 6);
+      gl.uniformMatrix4fv(uP, false, proj);
+      gl.uniformMatrix4fv(uMV, false, model(s.rx, s.ry, s.rz, s.tx));
+      gl.uniform1f(uSpread, spread * MOTION.spread);
+      draw(edges, gl.LINES, LAYERS.edge);
+      draw(nodes, gl.POINTS, LAYERS.node);
+      draw(accents, gl.POINTS, LAYERS.halo);
+      draw(accents, gl.POINTS, LAYERS.accent);
 
       if (spread < 0.35) {
         pulseState.forEach((p, i) => {
@@ -185,8 +190,9 @@ export default function NeuralLite() {
         gl.bindBuffer(gl.ARRAY_BUFFER, pulses.pos);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, pulseData);
         gl.uniform1f(uSpread, 0);
-        draw(pulses, gl.POINTS, col.accent, 3.5);
+        draw(pulses, gl.POINTS, LAYERS.pulse);
       }
+      if (++frames === 2) onReady?.();
     });
 
     return () => {
@@ -196,7 +202,7 @@ export default function NeuralLite() {
       stopSensor();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, []);
+  }, [onReady]);
 
   return <canvas ref={canvas} className="absolute inset-0 h-full w-full" aria-hidden />;
 }

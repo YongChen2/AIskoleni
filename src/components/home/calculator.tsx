@@ -8,31 +8,32 @@ const WEEKS = 46; // pracovní týdny v roce po odečtení dovolené a svátků
 
 const fmt = new Intl.NumberFormat("cs-CZ", { maximumFractionDigits: 0 });
 
-/** Číslo, které se k nové hodnotě „dopočítá“ mechanicky po krocích. */
+/** Číslo, které se k nové hodnotě plynule „dopočítá“ (sdílená smyčka gsap.ticker). */
 function Counter({ value, id, htmlFor }: { value: number; id?: string; htmlFor: string }) {
   const ref = useRef<HTMLOutputElement>(null);
-  const prev = useRef(value);
+  const shown = useRef(value);
+  // text v DOM po prvním renderu řídí jen animace – React by ho jinak na snímek přepsal na cílovou hodnotu
+  const [initial] = useState(value);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const from = prev.current;
-    prev.current = value;
     if (prefersReducedMotion()) {
+      shown.current = value;
       el.textContent = fmt.format(value);
       return;
     }
-    // Mechanické „dopočítání“ po krocích na sdílené smyčce (gsap.ticker)
     let kill: (() => void) | undefined;
     let cancelled = false;
     loadEngine().then(({ gsap }) => {
       if (cancelled) return;
-      const o = { v: from };
+      const o = { v: shown.current };
       const t = gsap.to(o, {
         v: value,
-        duration: 0.5,
-        ease: "steps(10)",
+        duration: 0.6,
+        ease: "expo.out",
         onUpdate: () => {
+          shown.current = o.v;
           el.textContent = fmt.format(Math.round(o.v));
         },
       });
@@ -41,13 +42,12 @@ function Counter({ value, id, htmlFor }: { value: number; id?: string; htmlFor: 
     return () => {
       cancelled = true;
       kill?.();
-      el.textContent = fmt.format(value);
     };
   }, [value]);
 
   return (
     <output ref={ref} id={id} htmlFor={htmlFor} className="tabular-nums">
-      {fmt.format(value)}
+      {fmt.format(initial)}
     </output>
   );
 }
@@ -71,30 +71,32 @@ function Slider({
   onChange: (v: number) => void;
   id: string;
 }) {
+  const fill = ((value - min) / (max - min)) * 100;
   return (
-    <div className="p-4 md:p-6">
+    <div>
       <div className="flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="micro text-muted">
+        <label htmlFor={id} className="text-[15px] text-muted">
           {label}
         </label>
-        <span className="micro">
-          <data value={value} className="text-lg">
+        <span className="text-[15px] text-fg">
+          <data value={value} className="mono font-medium">
             {fmt.format(value)}
           </data>{" "}
-          <span className="text-muted">{unit}</span>
+          <span className="text-subtle">{unit}</span>
         </span>
       </div>
       <input
         id={id}
         type="range"
-        className="range mt-4"
+        className="range mt-1"
+        style={{ "--fill": `${fill}%` } as React.CSSProperties}
         min={min}
         max={max}
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
       />
-      <div className="micro-xs mt-1 flex justify-between text-muted">
+      <div className="mono -mt-1 flex justify-between text-[12px] text-subtle">
         <span>{fmt.format(min)}</span>
         <span>{fmt.format(max)}</span>
       </div>
@@ -121,39 +123,45 @@ export function Calculator() {
 
   return (
     <Section id="kalkulacka">
-      <SectionHead code="SEC.04" label="Kalkulačka úspory" meta={`${WEEKS} PRACOVNÍCH TÝDNŮ / ROK`} />
-      <h2 className="macro-md mt-10 max-w-[16ch] md:mt-16">Kolik vás stojí rutina?</h2>
+      <SectionHead
+        title="Kolik vás stojí rutina?"
+        lead="Posuňte jezdce podle svého týmu. Výsledek je orientační – reálné číslo změříme po školení na vašich úlohách."
+      />
 
-      <div className="hairgrid mt-12 md:mt-16 lg:grid-cols-12">
-        <div className="lg:col-span-5">
-          <p className="micro border-b border-line px-4 py-3 text-muted md:px-6">[ OVLÁDACÍ PANEL ]</p>
+      <div className="mt-14 grid gap-4 md:mt-20 lg:grid-cols-12">
+        <div className="card space-y-7 p-6 md:p-8 lg:col-span-5">
           <Slider id={ids.people} label="Počet lidí" unit="osob" value={people} min={1} max={500} step={1} onChange={setPeople} />
-          <div className="border-t border-line" />
-          <Slider id={ids.hours} label="Rutina týdně / osoba" unit="h" value={hours} min={1} max={20} step={1} onChange={setHours} />
-          <div className="border-t border-line" />
+          <Slider id={ids.hours} label="Rutina týdně na osobu" unit="h" value={hours} min={1} max={20} step={1} onChange={setHours} />
           <Slider id={ids.rate} label="Hodinová sazba" unit="Kč" value={rate} min={200} max={2500} step={50} onChange={setRate} />
-          <div className="border-t border-line" />
           <Slider id={ids.share} label="Část rutiny, kterou AI zrychlí" unit="%" value={share} min={10} max={50} step={5} onChange={setShare} />
         </div>
 
-        <div className="flex flex-col justify-between overflow-hidden [contain:layout_paint] lg:col-span-7">
-          <div className="p-4 md:p-6">
-            <p className="micro text-muted">{">>>"} Ušetřený čas za rok</p>
-            <p className="macro mt-4 whitespace-nowrap text-[clamp(2.75rem,7.5vw,10rem)] leading-none">
-              <Counter value={Math.round(hoursSaved)} htmlFor={inputs} />
-              <span className="micro ml-3 align-top tracking-normal text-muted">HOD</span>
-            </p>
+        <div className="card-glow relative isolate flex flex-col overflow-hidden p-6 md:p-10 lg:col-span-7">
+          <div aria-hidden className="glow -z-10 -right-40 -top-40 h-[30rem] w-[30rem]" />
+          <p className="text-[15px] text-muted">Hodnota práce, kterou AI zrychlí za rok</p>
+          <p className="mt-3 whitespace-nowrap text-[clamp(2.75rem,6.5vw,5.25rem)] font-semibold leading-none tracking-[-0.045em] text-fg [contain:layout_paint]">
+            <Counter value={Math.round(money)} htmlFor={inputs} />
+            <span className="ml-3 text-[0.4em] font-medium tracking-[-0.02em] text-muted">Kč</span>
+          </p>
+
+          <div className="mt-10 grid gap-4 border-t border-line pt-6 sm:grid-cols-2">
+            <div>
+              <p className="label">Ušetřený čas</p>
+              <p className="mt-1 text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-[-0.03em] text-fg">
+                <Counter value={Math.round(hoursSaved)} htmlFor={inputs} />
+                <span className="ml-1.5 text-[0.6em] font-medium text-muted">h / rok</span>
+              </p>
+            </div>
+            <div>
+              <p className="label">Na osobu</p>
+              <p className="mt-1 text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-[-0.03em] text-fg">
+                <Counter value={Math.round(hoursSaved / people)} htmlFor={inputs} />
+                <span className="ml-1.5 text-[0.6em] font-medium text-muted">h / rok</span>
+              </p>
+            </div>
           </div>
-          <div className="border-t-2 border-accent p-4 md:p-6">
-            <p className="micro text-muted">{">>>"} Hodnota této práce</p>
-            <p className="macro mt-4 whitespace-nowrap text-[clamp(2.75rem,7.5vw,10rem)] leading-none text-accent">
-              <Counter value={Math.round(money)} htmlFor={inputs} />
-              <span className="micro ml-3 align-top tracking-normal text-muted">KČ</span>
-            </p>
-          </div>
-          <p className="micro-xs border-t border-line p-4 text-muted md:px-6">
-            Výpočet: lidé × hodiny týdně × {WEEKS} týdnů × podíl zrychlení. Orientační odhad, ne příslib. Reálné číslo
-            změříme po školení na vašich úlohách.
+          <p className="label mt-auto pt-10">
+            Výpočet: lidé × hodiny týdně × {WEEKS} týdnů × podíl zrychlení × sazba. Orientační odhad, ne příslib.
           </p>
         </div>
       </div>

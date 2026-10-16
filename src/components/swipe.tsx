@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { cx } from "./ui";
 
 /**
- * Na mobilu vodorovné swipe karty (CSS scroll-snap, bez JS knihovny) s ukazatelem „02 / 03“.
+ * Na mobilu vodorovné swipe karty (CSS scroll-snap, bez JS knihovny) s tečkovým ukazatelem.
  * Od `lg` se z kontejneru stane běžná mřížka (třídy předané v `gridClassName`).
  */
 export function Swipe({
@@ -22,19 +22,20 @@ export function Swipe({
   label: string;
 } & React.HTMLAttributes<HTMLOListElement>) {
   const list = useRef<HTMLOListElement>(null);
-  const out = useRef<HTMLSpanElement>(null);
+  const dots = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const el = list.current;
     if (!el) return;
-    let last = -1;
+    let last = 0;
     const onScroll = () => {
       const first = el.firstElementChild as HTMLElement | null;
-      const w = first ? first.offsetWidth + 1 : el.clientWidth;
+      const w = first ? first.offsetWidth + 12 : el.clientWidth;
       const i = Math.min(count - 1, Math.round(el.scrollLeft / w));
-      if (i !== last && out.current) {
+      if (i !== last && dots.current) {
+        dots.current.children[last]?.removeAttribute("data-on");
+        dots.current.children[i]?.setAttribute("data-on", "");
         last = i;
-        out.current.textContent = `${String(i + 1).padStart(2, "0")} / ${String(count).padStart(2, "0")}`;
       }
     };
     el.addEventListener("scroll", onScroll, { passive: true });
@@ -46,17 +47,23 @@ export function Swipe({
       <ol
         ref={list}
         aria-label={label}
-        className={cx("swipe flex gap-px overflow-x-auto border border-line bg-line lg:grid lg:overflow-visible", gridClassName)}
+        className={cx(
+          "swipe -mx-5 flex gap-3 overflow-x-auto scroll-px-5 px-5 md:-mx-8 md:scroll-px-8 md:px-8 lg:mx-0 lg:grid lg:gap-4 lg:overflow-visible lg:px-0",
+          gridClassName
+        )}
         {...rest}
       >
         {children}
       </ol>
-      <p aria-hidden className="micro-xs mt-3 flex justify-between text-muted lg:hidden">
-        <span>{"<<<"} SWIPE {">>>"}</span>
-        <span ref={out} className="text-fg tabular-nums">
-          01 / {String(count).padStart(2, "0")}
-        </span>
-      </p>
+      <span ref={dots} aria-hidden className="mt-5 flex justify-center gap-1.5 lg:hidden">
+        {Array.from({ length: count }, (_, i) => (
+          <span
+            key={i}
+            data-on={i === 0 ? "" : undefined}
+            className="h-1.5 w-1.5 rounded-full bg-fg opacity-20 transition-opacity duration-300 ease-[var(--ease)] data-[on]:opacity-100"
+          />
+        ))}
+      </span>
     </div>
   );
 }

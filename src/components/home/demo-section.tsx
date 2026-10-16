@@ -4,16 +4,15 @@ import { DEMO_DAILY_LIMIT } from "@/components/demo/roles";
 
 export function DemoSection() {
   return (
-    <Section id="demo" className="scroll-mt-20">
-      <SectionHead code="SEC.03" label="Živé AI demo" meta={`LIMIT ${DEMO_DAILY_LIMIT} DOTAZŮ / DEN`} />
-      <div className="mt-10 grid gap-8 md:mt-16 lg:grid-cols-12 lg:items-end">
-        <h2 className="macro-md lg:col-span-7">Zkuste si to na vlastním úkolu</h2>
-        <p className="prose-body text-muted lg:col-span-5">
-          Vyberte roli a zadejte úkol, který dnes řešíte. AI vrátí ukázkový výstup a hlavně prompt, který si můžete
-          uložit. Přesně tohle se na školení učíme – jen do hloubky a na vašich datech.
-        </p>
-      </div>
-      <div className="mt-12 md:mt-16">
+    <Section id="demo" className="scroll-mt-20 overflow-hidden">
+      <div aria-hidden className="glow left-1/2 top-[30%] h-[40rem] w-[70rem] -translate-x-1/2 opacity-80" />
+      <SectionHead
+        align="center"
+        eyebrow="Živé AI demo"
+        title="Zkuste si to na vlastním úkolu"
+        lead={`Vyberte roli a zadejte úkol, který dnes řešíte. Dostanete ukázkový výstup a hlavně prompt, který si můžete uložit. Limit ${DEMO_DAILY_LIMIT} dotazů denně.`}
+      />
+      <div className="relative mx-auto mt-14 max-w-5xl md:mt-16">
         <DemoLoader />
       </div>
     </Section>

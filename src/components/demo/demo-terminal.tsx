@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ArrowRight, Check, Copy, Sparkle } from "@/components/icons";
 import { cx } from "@/components/ui";
-import { useInViewAttr } from "@/lib/use-in-view-attr";
+import { DemoFrame } from "./demo-frame";
 import { DEMO_DAILY_LIMIT, DEMO_MAX_TASK, MARK_OUTPUT, MARK_PROMPT, demoRoles, type DemoRoleId } from "./roles";
 
 type Status = "idle" | "running" | "done" | "error";
@@ -15,25 +16,37 @@ function split(raw: string) {
   return { output, prompt };
 }
 
+/** Indikátor psaní – běží jen během streamování (motivovaný stav, ne nekonečná dekorace). */
+function Typing() {
+  return (
+    <span className="inline-flex gap-1 align-middle" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <span key={i} className="h-1.5 w-1.5 animate-pulse rounded-full bg-muted" style={{ animationDelay: `${i * 160}ms` }} />
+      ))}
+    </span>
+  );
+}
+
 export default function DemoTerminal() {
   const [role, setRole] = useState<DemoRoleId>("obchod");
   const [task, setTask] = useState("");
+  const [asked, setAsked] = useState("");
   const [raw, setRaw] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [remaining, setRemaining] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const abort = useRef<AbortController | null>(null);
-  const root = useRef<HTMLDivElement>(null);
-  useInViewAttr(root);
 
   const current = demoRoles.find((r) => r.id === role)!;
   const { output, prompt } = split(raw);
+  const running = status === "running";
 
-  async function run(e: React.FormEvent) {
-    e.preventDefault();
+  async function run(e?: React.FormEvent) {
+    e?.preventDefault();
     const text = task.trim() || current.example;
     if (!task.trim()) setTask(text);
+    setAsked(text);
     setRaw("");
     setError("");
     setCopied(false);
@@ -41,6 +54,7 @@ export default function DemoTerminal() {
     abort.current?.abort();
     const ctrl = new AbortController();
     abort.current = ctrl;
+    let acc = "";
 
     try {
       const res = await fetch("/api/demo", {
@@ -57,7 +71,6 @@ export default function DemoTerminal() {
       }
       const reader = res.body.getReader();
       const dec = new TextDecoder();
-      let acc = "";
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -67,7 +80,10 @@ export default function DemoTerminal() {
       if (!acc.trim()) throw new Error("AI nevrátila žádnou odpověď. Zkuste úkol popsat jinak.");
       setStatus("done");
     } catch (err) {
-      if ((err as Error).name === "AbortError") return;
+      if ((err as Error).name === "AbortError") {
+        setStatus(acc ? "done" : "idle");
+        return;
+      }
       setError((err as Error).message);
       setStatus("error");
     }
@@ -82,111 +98,129 @@ export default function DemoTerminal() {
     }
   }
 
-  const running = status === "running";
-
   return (
-    <div ref={root} className="border border-line bg-bg">
-      {/* Stavový řádek */}
-      <div className="micro-xs flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2 md:px-5">
-        <span className="signal-glow">● SYSTÉM ONLINE</span>
-        <span className="text-muted">
-          TERMINÁL / DEMO-01 · DOTAZY:{" "}
-          <data value={remaining ?? DEMO_DAILY_LIMIT} className="text-fg">
+    <DemoFrame
+      right={
+        <span className="mono text-[12px] text-subtle">
+          Dotazy dnes{" "}
+          <data value={remaining ?? DEMO_DAILY_LIMIT} className="text-muted">
             {remaining ?? DEMO_DAILY_LIMIT}/{DEMO_DAILY_LIMIT}
           </data>
         </span>
-      </div>
-
-      <form onSubmit={run} className="grid border-b border-line lg:grid-cols-12">
-        <fieldset className="border-b border-line p-3 md:p-5 lg:col-span-4 lg:border-b-0 lg:border-r">
-          <legend className="micro float-left mb-3 w-full text-muted">01 {">>>"} Vyberte roli</legend>
-          <div className="grid clear-both grid-cols-2 gap-px bg-line lg:grid-cols-1">
+      }
+    >
+      <form onSubmit={run}>
+        {/* Záložky rolí */}
+        <fieldset className="border-b border-line">
+          <legend className="sr-only">Vyberte roli</legend>
+          <div className="swipe flex gap-1 overflow-x-auto px-3 py-2.5 md:px-4" role="presentation">
             {demoRoles.map((r) => (
               <label
                 key={r.id}
                 className={cx(
-                  "micro flex min-h-11 cursor-pointer items-center gap-3 px-3 py-3",
-                  role === r.id ? "bg-fg text-bg" : "bg-bg hover:bg-bg-2"
+                  "inline-flex min-h-10 shrink-0 cursor-pointer items-center rounded-[9px] px-3.5 text-[14px] font-medium transition-colors duration-200 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent",
+                  role === r.id ? "bg-white/[0.07] text-fg" : "text-muted hover:text-fg"
                 )}
               >
-                <input
-                  type="radio"
-                  name="role"
-                  value={r.id}
-                  checked={role === r.id}
-                  onChange={() => setRole(r.id)}
-                  className="sr-only"
-                />
-                <span aria-hidden>{role === r.id ? "[×]" : "[ ]"}</span>
+                <input type="radio" name="role" value={r.id} checked={role === r.id} onChange={() => setRole(r.id)} className="sr-only" />
                 {r.label}
               </label>
             ))}
           </div>
         </fieldset>
 
-        <div className="flex flex-col p-3 md:p-5 lg:col-span-8">
-          <label htmlFor="demo-task" className="micro text-muted">
-            02 {">>>"} Napište úkol ze své práce
+        <div className="grid lg:grid-cols-12" aria-live="polite" aria-busy={running}>
+          {/* Konverzace */}
+          <div className="min-h-[19rem] border-b border-line p-4 md:p-6 lg:col-span-7 lg:border-b-0 lg:border-r">
+            {status === "idle" ? (
+              <div className="flex h-full flex-col justify-center">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-line bg-surface-2 text-accent-hover">
+                  <Sparkle size={18} />
+                </span>
+                <p className="mt-5 text-[17px] font-medium text-fg">Zadejte úkol ze své práce</p>
+                <p className="body mt-2 text-[15px]">AI vrátí ukázkový výstup a prompt, který si můžete uložit a používat dál.</p>
+                <button
+                  type="button"
+                  onClick={() => setTask(current.example)}
+                  className="mt-6 self-start rounded-xl border border-line bg-surface-2 px-4 py-3 text-left text-[14px] text-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+                >
+                  <span className="label mb-1 block">Příklad · {current.label}</span>
+                  {current.example}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-surface-2 px-4 py-3 text-[15px] text-fg">{asked}</div>
+                <div className="flex gap-3">
+                  <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent-hover">
+                    <Sparkle size={15} />
+                  </span>
+                  <samp className="block min-w-0 flex-1 whitespace-pre-wrap font-sans text-[15px] leading-relaxed text-muted">
+                    {error ? <span className="text-accent-hover">{error}</span> : output}
+                    {running && !output ? <Typing /> : null}
+                  </samp>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Hotový prompt */}
+          <div className="flex flex-col p-4 md:p-6 lg:col-span-5">
+            <div className="flex min-h-9 items-center justify-between gap-3">
+              <p className="text-[14px] font-medium text-fg">Hotový prompt</p>
+              {prompt && status === "done" ? (
+                <button type="button" onClick={copy} className="btn btn-secondary btn-sm min-h-11 lg:min-h-9">
+                  {copied ? <Check size={15} /> : <Copy size={15} />}
+                  {copied ? "Zkopírováno" : "Kopírovat"}
+                </button>
+              ) : null}
+            </div>
+            <samp className="inset mt-3 block min-h-40 flex-1 whitespace-pre-wrap p-4 font-mono text-[13px] leading-relaxed text-muted">
+              {prompt || <span className="text-subtle">Sem se vypíše prompt, který si můžete uložit a používat.</span>}
+            </samp>
+          </div>
+        </div>
+
+        {/* Composer */}
+        <div className="border-t border-line p-3 md:p-4">
+          <label htmlFor="demo-task" className="sr-only">
+            Napište úkol ze své práce
           </label>
-          <div className="mt-3 flex flex-1 items-start gap-2 border border-line p-3 focus-within:border-fg">
-            <span aria-hidden className="text-accent">&gt;</span>
+          <div className="rounded-[14px] border border-line bg-surface-2 transition-[border-color,box-shadow] duration-200 focus-within:border-[color-mix(in_srgb,var(--accent)_55%,var(--line-strong))] focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--accent)_20%,transparent)]">
             <textarea
               id="demo-task"
               value={task}
               onChange={(e) => setTask(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && !running) void run();
+              }}
               maxLength={DEMO_MAX_TASK}
-              rows={4}
-              placeholder={current.example}
-              className="min-h-24 w-full resize-y bg-transparent outline-none placeholder:text-muted"
+              rows={2}
+              placeholder={`Např.: ${current.example}`}
+              className="block min-h-16 w-full resize-none bg-transparent px-4 pt-3 text-[16px] text-fg outline-none placeholder:text-subtle"
             />
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <span className="micro-xs text-muted">
-              {task.length}/{DEMO_MAX_TASK} · Nevkládejte osobní ani citlivé údaje.
-            </span>
-            <div className="flex gap-2">
-              {running ? (
-                <button type="button" className="btn" onClick={() => abort.current?.abort()}>
-                  [ Stop ]
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3 pb-3 pl-4">
+              <span className="text-[12.5px] text-subtle">
+                <span className="mono">
+                  {task.length}/{DEMO_MAX_TASK}
+                </span>{" "}
+                · Nevkládejte osobní ani citlivé údaje.
+              </span>
+              <div className="flex gap-2">
+                {running ? (
+                  <button type="button" className="btn btn-secondary btn-sm min-h-11 lg:min-h-9" onClick={() => abort.current?.abort()}>
+                    Zastavit
+                  </button>
+                ) : null}
+                <button type="submit" className="btn btn-primary btn-sm min-h-11 lg:min-h-9" disabled={running}>
+                  {running ? "Generuji…" : "Spustit"}
+                  {running ? null : <ArrowRight size={15} />}
                 </button>
-              ) : null}
-              <button type="submit" className="btn btn-accent" disabled={running}>
-                {running ? "[ Zpracovávám… ]" : "[ Spustit ]"}
-              </button>
+              </div>
             </div>
           </div>
         </div>
       </form>
-
-      {/* Výstup */}
-      <div className="grid lg:grid-cols-12" aria-live="polite" aria-busy={running}>
-        <div className="border-b border-line p-3 md:p-5 lg:col-span-7 lg:border-b-0 lg:border-r">
-          <p className="micro text-muted">03 {">>>"} Výstup</p>
-          <samp className="mt-4 block min-h-40 whitespace-pre-wrap font-mono text-[15px] leading-relaxed">
-            {status === "idle" ? (
-              <span className="text-muted">
-                Čekám na zadání. Vyberte roli, napište úkol a stiskněte Spustit.
-                <br />
-              </span>
-            ) : null}
-            {error ? <span className="text-accent">ERR {">>>"} {error}</span> : output}
-            {running || status === "idle" ? <span className="cursor-block ml-1" aria-hidden /> : null}
-          </samp>
-        </div>
-        <div className="p-3 md:p-5 lg:col-span-5">
-          <div className="flex items-center justify-between">
-            <p className="micro text-muted">04 {">>>"} Hotový prompt</p>
-            {prompt && status === "done" ? (
-              <button type="button" onClick={copy} className="micro-xs min-h-11 border border-line px-3 hover:bg-fg hover:text-bg">
-                {copied ? "[ Zkopírováno ]" : "[ Kopírovat ]"}
-              </button>
-            ) : null}
-          </div>
-          <samp className="mt-4 block min-h-40 whitespace-pre-wrap bg-bg-2 p-3 font-mono text-[13px] leading-relaxed text-muted">
-            {prompt || "Sem se vypíše prompt, který si můžete uložit a používat."}
-          </samp>
-        </div>
-      </div>
-    </div>
+    </DemoFrame>
   );
 }

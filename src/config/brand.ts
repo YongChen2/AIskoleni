@@ -5,15 +5,11 @@
  */
 export const brand = {
   name: "AI Akademie",
-  /** Krátká značka do HUD prvků a štítků */
-  code: "AA",
-  mark: "®",
   claim: "AI ve firmě, která opravdu pracuje",
   description:
     "Praktická firemní školení AI podle rolí. Úvodní workshop pro vedení, školení týmů a průběžný rozvoj – s reportem pro vedení a bezpečnou prací s daty.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ai-skoleni.vercel.app",
   locale: "cs_CZ",
-  revision: "REV 1.0",
 
   contact: {
     email: "[DOPLNIT]@example.cz",
@@ -21,7 +17,6 @@ export const brand = {
     company: "[DOPLNIT] Název s.r.o.",
     ico: "[DOPLNIT] IČO",
     address: "[DOPLNIT] Ulice 1, 110 00 Praha",
-    coords: "50.0755°N 14.4378°E",
   },
 
   colors: {

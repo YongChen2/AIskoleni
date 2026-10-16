@@ -1,3 +1,4 @@
+import { Check, Close } from "@/components/icons";
 import { Section, SectionHead } from "@/components/ui";
 
 const problems = [
@@ -17,29 +18,37 @@ const solutions = [
 export function Problem() {
   return (
     <Section>
-      <SectionHead code="SEC.01" label="Diagnostika" meta="PROBLÉM → ŘEŠENÍ" />
-      <h2 className="macro-md mt-10 max-w-[16ch] md:mt-16">
-        Lidé AI mají. Neumí ji použít na <span className="text-accent">svou práci.</span>
-      </h2>
+      <SectionHead
+        title={
+          <>
+            Lidé AI mají. Neumí ji použít <span className="text-muted">na svou práci.</span>
+          </>
+        }
+        lead="Nejde o nástroj, ale o návyk. Školení mění to, jak lidé zadávají práci – a to je vidět na výsledcích."
+      />
 
-      <div className="hairgrid mt-12 md:mt-20 md:grid-cols-2">
-        <div className="p-5 md:p-8">
-          <p className="micro text-accent">[!] Stav dnes</p>
-          <ul className="mt-6 space-y-5">
-            {problems.map((p, i) => (
-              <li key={p} className="grid grid-cols-[3rem_1fr] gap-2">
-                <span className="micro-xs pt-1 text-muted">ERR.{String(i + 1).padStart(2, "0")}</span>
+      <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2" data-reveal-group>
+        <div data-reveal className="card p-6 md:p-8">
+          <p className="text-[14px] font-medium text-muted">Dnes</p>
+          <ul className="mt-6 space-y-4">
+            {problems.map((p) => (
+              <li key={p} className="flex gap-3.5 text-muted">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line text-subtle">
+                  <Close size={13} />
+                </span>
                 <span>{p}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="bg-bg-2! p-5 md:p-8">
-          <p className="micro">{">>>"} Po školení</p>
-          <ul className="mt-6 space-y-5">
-            {solutions.map((p, i) => (
-              <li key={p} className="grid grid-cols-[3rem_1fr] gap-2">
-                <span className="micro-xs pt-1 text-muted">FIX.{String(i + 1).padStart(2, "0")}</span>
+        <div data-reveal className="card-glow p-6 md:p-8">
+          <p className="text-[14px] font-medium text-fg">Po školení</p>
+          <ul className="mt-6 space-y-4">
+            {solutions.map((p) => (
+              <li key={p} className="flex gap-3.5 text-fg">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-hover">
+                  <Check size={14} />
+                </span>
                 <span>{p}</span>
               </li>
             ))}

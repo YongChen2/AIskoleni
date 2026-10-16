@@ -12,9 +12,10 @@ export function SensorButton() {
       type="button"
       onClick={() => void requestSensor()}
       disabled={state === "denied"}
-      className="micro-xs min-h-11 border border-line bg-bg px-3 text-fg hover:bg-fg hover:text-bg disabled:text-muted"
+      className="btn btn-ghost btn-sm min-h-11 gap-2 text-[13px] disabled:opacity-60"
     >
-      {state === "denied" ? "[ SENZOR ZAMÍTNUT ]" : "[ AKTIVOVAT SENZOR ]"}
+      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+      {state === "denied" ? "Náklon zamítnut" : "Ovládat náklonem"}
     </button>
   );
 }
