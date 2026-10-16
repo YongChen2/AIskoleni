@@ -1,5 +1,6 @@
 import { Badge, ButtonLink } from "@/components/ui";
 import { SensorButton } from "@/components/hero3d/sensor-button";
+import { VideoBackground } from "@/components/video-background";
 
 const meta: [string, string][] = [
   ["Formát", "Prezenčně i online"],
@@ -11,12 +12,12 @@ const meta: [string, string][] = [
 export function Hero({ visual }: { visual?: React.ReactNode }) {
   return (
     <section className="relative isolate overflow-hidden">
-      {/* pozadí: jemná mřížka, akcentní záře a 3D síť (na desktopu vpravo, na mobilu nahoře a vyblednutá) */}
-      <div aria-hidden className="grid-bg absolute inset-0 -z-20" />
+      {/* pozadí: smyčkové video, akcentní záře a 3D síť (na desktopu vpravo, na mobilu nahoře a vyblednutá) */}
+      <VideoBackground src="hero" overlay="hero" className="-z-20" />
       <div aria-hidden className="glow -z-20 right-[-20%] top-[-10%] h-[42rem] w-[42rem] lg:right-[-6%] lg:top-[4%] lg:h-[48rem] lg:w-[56rem]" />
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 -z-10 h-[62%] [mask-image:linear-gradient(to_bottom,black_45%,transparent)] lg:inset-y-0 lg:h-auto lg:[mask-image:linear-gradient(to_right,transparent_8%,black_42%)]"
+        className="absolute inset-x-0 top-0 -z-10 h-[62%] opacity-85 [mask-image:linear-gradient(to_bottom,black_45%,transparent)] lg:inset-y-0 lg:h-auto lg:[mask-image:linear-gradient(to_right,transparent_8%,black_42%)]"
       >
         {visual}
       </div>
