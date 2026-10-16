@@ -170,7 +170,8 @@ export default function NeuralCanvas() {
       i.x += (pointer.x - i.x) * 0.08;
       i.y += (pointer.y - i.y) * 0.08;
       i.spread = Math.min(1, Math.max(0, window.scrollY / heroH));
-      advance(time);
+      // R3F s frameloop="never" bere čas v SEKUNDÁCH (onTick dává ms) – jinak síť rotuje ~1000× rychleji
+      advance(time / 1000);
     });
 
     return () => {

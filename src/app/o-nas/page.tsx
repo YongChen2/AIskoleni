@@ -48,7 +48,7 @@ export default function ONasPage() {
             <SectionHead code="Q.01" label="Přístup" />
           </div>
           <blockquote className="lg:col-span-10">
-            <p className="dither-text font-serif text-[clamp(2.5rem,7vw,7rem)] italic leading-[0.95]">
+            <p className="font-serif text-[clamp(1.75rem,3.6vw,3.25rem)] italic leading-[1.15] text-fg">
               „Nikdo nepotřebuje vědět, jak AI funguje. Potřebuje vědět, co s ní zítra udělá jinak.“
             </p>
           </blockquote>
