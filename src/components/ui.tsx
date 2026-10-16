@@ -115,7 +115,7 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <header className="relative isolate overflow-hidden pb-16 pt-14 md:pb-24 md:pt-24">
+    <header data-theme="dark" data-band="" className="relative isolate overflow-hidden pb-16 pt-14 md:pb-24 md:pt-24">
       <VideoBackground src="ambient" overlay="page" opacity={0.32} className="-z-10" />
       <div aria-hidden className="glow -z-10 -top-48 right-[-10%] h-[36rem] w-[48rem]" />
       <div className="shell">

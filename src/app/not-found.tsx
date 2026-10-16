@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <section className="relative isolate overflow-hidden pb-24 pt-16 md:pt-24">
+    <section data-theme="dark" data-band="" className="relative isolate overflow-hidden pb-24 pt-16 md:pt-24">
       <div aria-hidden className="grid-bg absolute inset-0 -z-10" />
       <div aria-hidden className="glow -z-10 left-[-10%] top-[-20%] h-[36rem] w-[44rem]" />
       <div className="shell grid items-center gap-14 lg:grid-cols-12">

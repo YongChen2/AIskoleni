@@ -627,7 +627,8 @@ html.lenis body {
 
 /* ---------- Plovoucí tab bar (mobil) ---------- */
 .tab-bar {
-  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  /* 94 %: lišta plave i nad světlými sekcemi – text musí držet AA i nad papírem */
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   backdrop-filter: blur(16px) saturate(150%);
   box-shadow:

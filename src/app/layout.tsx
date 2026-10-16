@@ -45,7 +45,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Přeskočit na obsah
         </a>
         <SiteHeader />
-        <main id="obsah">{children}</main>
+        <main id="obsah" data-theme="light" data-band="">
+          {children}
+        </main>
         <SiteFooter />
         <ThemeBackdrop />
         <ScrollProgress />

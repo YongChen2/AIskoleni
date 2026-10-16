@@ -117,7 +117,8 @@ const themes = {
     onAccent: "#0B0C0E",
     success: "#FFFFFF",
     warning: "#FFFFFF",
-    tint: "#FFFFFF",
+    /** tmavé překryvy (hover, aktivní odkaz) → bílý text na nich má víc kontrastu */
+    tint: "#000000",
     edge: "rgba(255,255,255,0.35)",
     shadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 24px 60px -30px rgba(80,0,0,0.6)",
     scheme: "dark",
