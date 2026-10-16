@@ -17,6 +17,9 @@ export function decrypt(heading: HTMLElement, { gsap }: Engine, duration = 650):
   heading.dataset.decrypted = "1";
   const label = heading.textContent?.replace(/\s+/g, " ").trim() ?? "";
   heading.setAttribute("aria-label", label);
+  // výška zamčená po dobu efektu → okolní obsah se nemůže posunout (CLS 0), i kdyby se uvnitř změnilo zalomení
+  const lockedHeight = heading.style.height;
+  heading.style.height = `${heading.getBoundingClientRect().height}px`;
 
   // 1) textové uzly → slova (nowrap) → znaky
   const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
@@ -64,6 +67,7 @@ export function decrypt(heading: HTMLElement, { gsap }: Engine, duration = 650):
     gsap.ticker.remove(tick);
     for (const [t, wrap] of restore) wrap.replaceWith(t);
     heading.removeAttribute("aria-label");
+    heading.style.height = lockedHeight;
   };
   const tick = () => {
     const now = performance.now() - start;
