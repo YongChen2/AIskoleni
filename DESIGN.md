@@ -86,7 +86,8 @@ Pravidla:
   a v CTA blocích (`ambient`); mřížka zůstává jen na 404.
   - smyčka 8 s bez zvuku z `public/video` (zpracování `scripts/video.sh`), video opacity 0,32–0,42
   - překryv: gradient z barvy pozadí na straně textu + vinětace → text drží kontrast AA (ověřeno měřením přes snímky smyčky)
-  - `<video>` se vkládá až v idle po načtení stránky, přehrává jen ve viewportu; reduced motion, Save-Data a 2g/3g = jen poster
+  - video se spouští až v idle po načtení stránky a kreslí se do `<canvas>` (není kandidát LCP), přehrává jen ve viewportu;
+    reduced motion, Save-Data a 2g/3g = jen poster
   - 3D síť v hero zůstává nad videem se sníženou opacitou (85 %)
 - **AI demo:** produktová karta ve stylu okna aplikace, odpovědi jsou předgenerované (`src/content/demo.ts`):
   - nahoře tři tečky, název „AI asistent“ a štítek „Ukázka“; pod tím záložky rolí „Obchod / Administrativa / Management / Marketing“
