@@ -7,6 +7,7 @@ import { setMenuOpen, useMenuOpen } from "@/lib/menu-store";
 import { brand, nav } from "@/config/brand";
 import { cx } from "./ui";
 import { HudMini } from "./hud";
+import { SoundToggle } from "./sound-toggle";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -36,9 +37,10 @@ export function SiteHeader() {
         </span>
         <span className="border-r border-line px-4 py-1.5">{brand.revision}</span>
         <span className="border-r border-line px-4 py-1.5">{brand.contact.coords}</span>
-        <span className="ml-auto px-8 py-1.5">
+        <span className="ml-auto border-r border-line px-4 py-1.5">
           STATUS: <span className="text-fg">PŘIJÍMÁME POPTÁVKY</span>
         </span>
+        <SoundToggle className="px-8 py-1.5" />
       </div>
       <div className="relative flex h-14 items-stretch md:h-16">
         <Link
@@ -109,6 +111,9 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
+          <div className="flex justify-end border-b border-line px-4">
+            <SoundToggle className="min-h-11" />
+          </div>
           <div className="p-4">
             <Link href="/kontakt" className="btn btn-accent w-full" onClick={() => setMenuOpen(false)}>
               [ Domluvit školení ]

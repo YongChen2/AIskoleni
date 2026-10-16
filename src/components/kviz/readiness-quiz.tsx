@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { cx } from "@/components/ui";
 import { haptic } from "@/lib/haptics";
+import { play } from "@/lib/sound";
 import { type Area, areas, questions, recommend } from "./questions";
 
 export function ReadinessQuiz() {
@@ -17,6 +18,7 @@ export function ReadinessQuiz() {
 
   function choose(score: number) {
     haptic(12);
+    play(step === questions.length - 1 ? "confirm" : "click");
     setAnswers((a) => ({ ...a, [q.id]: score }));
     setStep((s) => s + 1);
   }
@@ -106,7 +108,7 @@ export function ReadinessQuiz() {
           <span key={x.id} className={cx("flex-1", i < step ? "bg-accent" : i === step ? "bg-fg" : "bg-bg")} />
         ))}
       </div>
-      <fieldset key={q.id} className="p-4 md:p-8">
+      <fieldset key={q.id} data-sound="custom" className="p-4 md:p-8">
         <legend className="sr-only">Otázka {step + 1}</legend>
         <p className="micro text-muted">Q.{String(step + 1).padStart(2, "0")}</p>
         <h2 className="macro-sm mt-4 max-w-[28ch]">{q.q}</h2>

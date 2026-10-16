@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { brand } from "@/config/brand";
 import { hasFinePointer, loadEngine } from "@/lib/motion";
+import { play } from "@/lib/sound";
 
 export const BOOT_KEY = "boot-done";
 const MAX_MS = 1500;
@@ -49,6 +50,8 @@ export function BootSequence() {
     const finish = () => {
       if (finished.current) return;
       finished.current = true;
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
       setProgress(1);
       setLines((l) => [...l.map((x) => ({ ...x, done: true })), { text: "NEURAL NET: ONLINE", done: true }]);
       try {
@@ -67,7 +70,12 @@ export function BootSequence() {
       })
     );
     const hard = setTimeout(finish, MAX_MS - 250);
-    const skip = () => finish();
+    // přeskočení je interakce → smí pípnout (pokud jsou zvuky zapnuté)
+    function skip() {
+      if (finished.current) return;
+      play("boot");
+      finish();
+    }
     window.addEventListener("pointerdown", skip);
     window.addEventListener("keydown", skip);
     return () => {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cx } from "@/components/ui";
 import { brand } from "@/config/brand";
 import { haptic } from "@/lib/haptics";
+import { play } from "@/lib/sound";
 
 type Zone = "green" | "orange" | "red";
 
@@ -39,13 +40,15 @@ export function DataSemafor() {
 
   function place(id: string, zone: Zone) {
     const item = items.find((i) => i.id === id);
-    haptic(item?.zone === zone ? 10 : [20, 40, 20]);
+    const ok = item?.zone === zone;
+    haptic(ok ? 10 : [20, 40, 20]);
+    play(ok ? "confirm" : "error");
     setPlaced((p) => ({ ...p, [id]: zone }));
     setLast(id);
   }
 
   return (
-    <div>
+    <div data-sound="custom">
       <div className="micro-xs flex flex-wrap justify-between gap-2 border border-b-0 border-line px-3 py-2 text-muted md:px-5">
         <span>[ DATOVÝ SEMAFOR / SIM-01 ]</span>
         <span>

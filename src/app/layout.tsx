@@ -9,6 +9,7 @@ import { BootSequence, bootScript } from "@/components/boot-sequence";
 import { Cursor } from "@/components/cursor";
 import { HudPanel } from "@/components/hud";
 import { BottomBar } from "@/components/bottom-bar";
+import { SoundClicks } from "@/components/sound-toggle";
 import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MotionProvider />
         <HudPanel />
         <BottomBar />
+        <SoundClicks />
         <Cursor />
         <JsonLd data={organizationSchema} />
       </body>
