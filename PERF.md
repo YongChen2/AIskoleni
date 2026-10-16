@@ -122,3 +122,74 @@ Speed Index na mobilu vzrostl z ~0,9 s na ~1,4 s. Příčina je záměrná: boot
 - **INP:** blikání terminálového kurzoru přes `steps()` zdržovalo vykreslení po interakci až o ~350 ms; nahrazeno plynulým doznívaním a pozastavením mimo viewport.
 - **3D na mobilu:** three.js + R3F by přidalo ~500 ms TBT, proto mobil používá vlastní odlehčený WebGL renderer (stejná síť a shader).
 - **Hydratace:** efekty měnící text čekají na hydrataci konkrétního prvku (dříve chyba React #418 a překreslení podstromu).
+
+## 3. Po UPGRADE-2 (modernizace vzhledu)
+
+Stejná metodika a stejné skripty jako v části 2. Srovnání je proti stavu po UPGRADE-1 (`a7411f2`).
+
+### Lighthouse mobil – simulované throttling
+
+| Stránka | Perf | A11y | LCP | TBT | CLS | Speed Index |
+|---|---|---|---|---|---|---|
+| `/` | 97 → **97** | 100 → **100** | 2614 ms → **2622 ms** | 6 ms → **8 ms** | 0 → **0** | 1524 ms → **1059 ms** ✓ |
+| `/skoleni` | 98 → **97** | 100 → **100** | 2465 ms → **2621 ms** ✗ | 6 ms → **15 ms** | 0 → **0** | 1314 ms → **1059 ms** ✓ |
+| `/bezpecnost` | 98 → **97** | 100 → **100** | 2463 ms → **2507 ms** | 5 ms → **49 ms** | 0 → **0** | 1447 ms → **1062 ms** ✓ |
+| `/kviz` | 98 → **98** | 100 → **100** | 2464 ms → **2491 ms** | 6 ms → **36 ms** | 0 → **0** | 1339 ms → **1058 ms** ✓ |
+| `/kontakt` | 97 → **96** | 100 → **100** | 2613 ms → **2689 ms** | 5 ms → **74 ms** | 0 → **0** | 1483 ms → **1072 ms** ✓ |
+
+Rozdíly v LCP a TBT o desítky ms jsou na hranici šumu. V jiném běhu stejného buildu (`lh-u2b`) vyšla
+mobilní Performance 97–98 a TBT 8–25 ms.
+
+### Lighthouse mobil – reálné throttling (Slow 4G + CPU 4×), 2 běhy
+
+| Stránka | Perf | LCP | CLS |
+|---|---|---|---|
+| `/` | 98 → **99** | 1672 ms → **1570–1587 ms** ✓ | 0 → **0** |
+| `/skoleni` | 99 → **99** | 1446 ms → **1579–1586 ms** | 0 → **0** |
+| `/bezpecnost` | 98 → **99** | 1668 ms → **1573–1578 ms** ✓ | 0 → **0,001** |
+| `/kviz` | 98 → **99** | 1686 ms → **1564–1592 ms** ✓ | 0 → **0** |
+| `/kontakt` | 99 → **99** | 1441 ms → **1564–1567 ms** | 0 → **0** |
+
+### Lighthouse desktop
+Performance 100 a přístupnost 100 na všech pěti stránkách, LCP 547–609 ms, TBT 0–4 ms, CLS 0.
+
+### Scroll při CPU 4× a INP
+
+| Režim | Stránka | fps | Dlouhé snímky | CLS při scrollu |
+|---|---|---|---|---|
+| mobile | `/` | 60 → **59,9** | 0 % → **0,2 %** | 0 → **0** |
+| mobile | `/skoleni` | 60 → **60** | 0 % → **0 %** | 0 → **0** |
+| mobile | `/bezpecnost` | 59,9 → **60** | 0,2 % → **0 %** | 0 → **0** |
+| desktop | všechny tři | 60 → **60** | 0 % → **0 %** | 0 → **0** |
+
+INP (nejhorší interakce): mobil 32–40 ms → **40 ms**, desktop 32 ms → **32 ms**.
+
+CLS při fontu zpožděném o 1,5 s: ≤ 0,0007 na 5 stránkách ve 2 šířkách.
+
+### Kontrola rozpočtu
+
+| Požadavek | Výsledek | Stav |
+|---|---|---|
+| Lighthouse mobil Performance ≥ 90 | 96–98 (simulované), 99 (reálné throttling) | splněno |
+| CLS < 0,05 | 0–0,001 (načtení, scroll, pomalý font) | splněno |
+| INP < 150 ms | ≤ 40 ms | splněno |
+| LCP < 2,0 s | 1,56–1,59 s s reálným throttlingem; 2,5–2,7 s v simulaci | stejně jako v UPGRADE-1, viz část 2 |
+| 60 fps při scrollu | 59,9–60 fps | splněno |
+| Animace jen transform / opacity | reveal, progress pruhy, tečky swipe, magnetika (`translate`) i 3D prolnutí | splněno |
+| Jedna sdílená rAF smyčka | `gsap.ticker` (Lenis, počítadla, 3D); reveal, progress nahoře, hlavička a tab bar nemají vlastní smyčku | splněno |
+| Nic nebliká | automatická kontrola na 11 stránkách × 2 šířky: žádný prvek ve viewportu se po načtení neskryl | splněno |
+
+### Co se v UPGRADE-2 změnilo z hlediska výkonu
+- **Speed Index −30 % (~1,4 s → ~1,06 s):** odstraněna boot sekvence. Tím je vyřešené zhoršení popsané v části 2.
+- **Fonty:** Archivo Black + JetBrains Mono (45 KB) nahrazeny Geist + Geist Mono (19,6 + 20 KB). Mono se nepřednačítá.
+- **Vlastní záložní font „Geist Fallback“:** automatický fallback next/font měl jediný `size-adjust` 107 %
+  pro všechny řezy, takže odstavce se při výměně fontu přezalamovaly (CLS 0,138 na `/kviz` s reálným throttlingem).
+  Teď má Regular 103,7 % a Bold 101,1 % podle změřené šířky českého textu → CLS 0.
+- **Mobilní 3D až po první interakci:** první WebGL kontext inicializuje GPU proces. V Lighthouse (SwiftShader)
+  to trvalo ~2,5 s a volal se dvakrát (testovací plátno + skutečné), takže TBT bylo 2,7 s a Performance 68.
+  Mobil teď testovací plátno nevytváří a WebGL spouští v idle po prvním scrollu nebo dotyku. Do té doby je vidět
+  stejná statická síť ze SSR, na kterou se 3D plynule prolne.
+- **Reveal bez rAF:** místo GSAP clip-path jde o IntersectionObserver + CSS přechod (compositor). Skrývá se jen
+  obsah pod ohybem a až po hydrataci.
+- **Kontrast (přístupnost 96 → 100):** primární tlačítka mají `--accent-strong` #E0282D (bílá 4,66 : 1)
+  a `--subtle` je zvednuté na #7D838D (~5 : 1).

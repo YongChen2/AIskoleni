@@ -10,17 +10,25 @@ const NeuralLite = dynamic(() => import("./neural-lite"), { ssr: false, loading:
 
 type Mode = "static" | "desktop" | "mobile";
 
-/** 3D s WebGL a bez reduced-motion; na dotykových zařízeních odlehčená verze. */
+/**
+ * 3D jen bez reduced-motion. Desktop ověří WebGL testovacím plátnem (R3F by bez kontextu spadl);
+ * mobil plátno nevytváří – první WebGL kontext inicializuje GPU proces (na slabém zařízení / v emulaci
+ * stovky ms až sekundy), proto ho odlehčená verze vytvoří až po první interakci a sama si poradí s `null`.
+ */
 function detect(): Mode {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "static";
+  if (!("WebGLRenderingContext" in window)) return "static";
+  if (!window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches) return "mobile";
   try {
     const c = document.createElement("canvas");
-    if (!(c.getContext("webgl2") || c.getContext("webgl"))) return "static";
+    return c.getContext("webgl2") || c.getContext("webgl") ? "desktop" : "static";
   } catch {
     return "static";
   }
-  return window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches ? "desktop" : "mobile";
 }
+
+const idle = (fn: () => void, timeout: number) =>
+  typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(fn, { timeout }) : window.setTimeout(fn, 50);
 
 /**
  * Statická SVG síť ze SSR je vidět hned; 3D se načte po LCP (idle) a až po prvních vykreslených
@@ -34,11 +42,21 @@ export function HeroVisual({ fallback }: { fallback: React.ReactNode }) {
   useEffect(() => {
     const m = detect();
     if (m === "static") return;
-    const run = () => setMode(m);
     let id: number | undefined;
-    if (typeof window.requestIdleCallback === "function") id = window.requestIdleCallback(run, { timeout: 2500 });
-    else run();
+    const run = () => (id = idle(() => setMode(m), 2500));
+    if (m === "desktop") {
+      run();
+      return () => window.cancelIdleCallback?.(id!);
+    }
+    // mobil: až po prvním scrollu / dotyku (v idle, ne v handleru → neovlivní odezvu interakce)
+    const events = ["scroll", "touchstart", "pointerdown"] as const;
+    const once = () => {
+      events.forEach((e) => window.removeEventListener(e, once));
+      run();
+    };
+    events.forEach((e) => window.addEventListener(e, once, { passive: true, once: true }));
     return () => {
+      events.forEach((e) => window.removeEventListener(e, once));
       if (id !== undefined) window.cancelIdleCallback?.(id);
     };
   }, []);

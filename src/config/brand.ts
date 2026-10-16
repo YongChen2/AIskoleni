@@ -31,9 +31,11 @@ export const brand = {
     borderSolid: "#1C1D1F",
     fg: "#F2F3F5",
     muted: "#9BA1AB",
-    subtle: "#5D636D",
+    subtle: "#7D838D",
     accent: "#FF3B3B",
     accentHover: "#FF5A4F",
+    /** Pozadí primárních tlačítek – tmavší akcent kvůli kontrastu bílého textu (4,66 : 1, WCAG AA) */
+    accentStrong: "#E0282D",
     /** Stavové odznaky (semafor, kvíz, online stav dema) – jen jemně, ne plochy */
     success: "#3DD68C",
     warning: "#F5A524",
@@ -60,6 +62,7 @@ export const brandCssVars = {
   "--subtle": brand.colors.subtle,
   "--accent": brand.colors.accent,
   "--accent-hover": brand.colors.accentHover,
+  "--accent-strong": brand.colors.accentStrong,
   "--success": brand.colors.success,
   "--warning": brand.colors.warning,
 } as React.CSSProperties;

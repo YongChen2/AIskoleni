@@ -20,7 +20,7 @@ Všechny texty piš vlastní, česky, prodejně, bez AI frází.
 - Deploy Vercel, repo GitHub: https://github.com/YongChen2/AIskoleni
 
 ## Design
-**Závazný je `DESIGN.md`** (skill industrial-brutalist-ui, archetyp Tactical Telemetry, jen tmavý režim). Při konfliktu s tímto briefem vyhrává DESIGN.md. Žádný generický „AI template“ vzhled.
+**Závazný je `DESIGN.md`** (od UPGRADE-2 systém „Engineering Platform“, jen tmavý režim). Při konfliktu s tímto briefem vyhrává DESIGN.md. Žádný generický „AI template“ vzhled.
 
 ## Sitemap
 1. **/** Úvod

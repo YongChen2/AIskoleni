@@ -7,16 +7,17 @@ import localFont from "next/font/local";
  */
 
 /**
- * Nadpisy i běžný text. `swap` + automaticky dopočítaný fallback (Arial se size-adjust/ascent-override
- * podle metrik Geistu) → výměna fontu text téměř neposune (CLS).
+ * Nadpisy i běžný text. `swap` + vlastní fallback „Geist Fallback“ (globals.css): dva řezy Arialu, každý
+ * s vlastním size-adjust podle změřené šířky českého textu (Geist 400 ≈ Arial ×1,037, Geist 600 ≈ Arial Bold ×1,011).
+ * Automatický fallback next/font má jediné size-adjust pro všechny řezy → odstavce se přezalamovaly (CLS).
  */
 export const fontSans = localFont({
   src: "../fonts/Geist-subset.woff2",
   weight: "400 700",
   display: "swap",
   variable: "--font-sans",
-  adjustFontFallback: "Arial",
-  fallback: ["system-ui", "Arial", "sans-serif"],
+  adjustFontFallback: false,
+  fallback: ["Geist Fallback", "system-ui", "Arial", "sans-serif"],
 });
 
 /**

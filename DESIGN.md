@@ -20,9 +20,10 @@ motivovaný. Hustota je vzdušná.
 | `--line-strong` | `rgba(255,255,255,0.14)` | hover okraj, aktivní stav |
 | `--fg` | `#F2F3F5` | nadpisy, důležitý text |
 | `--muted` | `#9BA1AB` | běžný text odstavců (sekundární) |
-| `--subtle` | `#5D636D` | popisky, metadata (terciární; jen ≥ 12 px a ne pro důležitý text) |
+| `--subtle` | `#7D838D` | popisky, metadata (terciární; ~5 : 1 na povrchu – zvednuto z #5D636D kvůli WCAG AA) |
 | `--accent` | `#FF3B3B` | jediný akcent: primární CTA, highlighty, glow |
-| `--accent-hover` | `#FF5A4F` | hover primárního CTA |
+| `--accent-hover` | `#FF5A4F` | světlejší akcent: text odznaků, ikony, přechod v `.hl` |
+| `--accent-strong` | `#E0282D` | pozadí primárních tlačítek (bílý text 4,66 : 1); hover = silnější záře, ne světlejší barva |
 | `--success` / `--warning` | `#3DD68C` / `#F5A524` | jen stavové odznaky (semafor, kvíz, online stav dema) |
 
 Pravidla:
@@ -59,7 +60,7 @@ Pravidla:
 - **Header:** sticky, průhledný. Po odscrollování dostane `backdrop-filter: blur(12px)`, poloprůhledné pozadí
   a okraj dole. Má jeden řádek a výšku 64 px. Logo vlevo, navigace uprostřed, CTA vpravo.
 - **Tlačítka:**
-  - `.btn-primary`: akcent, bílý text, radius 10 px, výška 44 px a jemná vnitřní záře.
+  - `.btn-primary`: `--accent-strong`, bílý text, radius 10 px, výška 44 px a jemná vnitřní záře.
   - `.btn-secondary`: `--surface-2`, okraj `--line`.
   - `.btn-ghost`: jen text.
   - Text tlačítka je vždy na jednom řádku a bez hranatých závorek. Šipka `→` může být v kruhu na konci.
@@ -113,7 +114,7 @@ Plynulost má přednost.
 - obří kapitálkové nadpisy, mono písmo v odstavcích a navigaci, kontrastní serif
 
 ## Přístupnost
-- Kontrast textu splňuje WCAG AA: `--muted` na `--bg` má ~7:1. `--subtle` je jen pro dekorativní metadata.
+- Kontrast textu splňuje WCAG AA: `--muted` na `--bg` má ~7 : 1, `--subtle` ~5 : 1, bílá na `--accent-strong` 4,66 : 1.
 - Focus: `outline: 2px solid var(--accent)` s offsetem 2 px.
 - Dotykové cíle mají aspoň 44 × 44 px.
 - Sémantické tagy `<output>`, `<data>`, `<samp>` a `<dl>` zůstávají tam, kde dávají smysl.

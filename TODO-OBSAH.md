@@ -8,12 +8,11 @@ grep -rn "\[DOPLNIT" src
 
 ## 1. Značka a kontakty – `src/config/brand.ts`
 Propisuje se do hlavičky, patičky, kontaktu, JSON-LD i OG obrázků.
-- [ ] Název značky (`name`, `code`) – teď pracovní „AI Akademie“
+- [ ] Název značky (`name`) – teď pracovní „AI Akademie“
 - [ ] E-mail, telefon
 - [ ] Název firmy, IČO, adresa
-- [ ] Souřadnice v HUD prvcích (`coords`) – volitelně skutečné sídlo
 - [ ] Barvy (`colors`) a fonty (`src/config/fonts.ts`), pokud se mění vizuál
-- [ ] Logo/ikona – `src/app/icon.svg`
+- [ ] Logo/ikona – `src/components/logo.tsx` a `src/app/icon.svg`
 
 ## 2. Úvodní stránka – `src/content/site.ts`
 - [ ] Čísla v sekci Reference: počet proškolených lidí, počet firem, hodnocení účastníků
@@ -24,7 +23,7 @@ Propisuje se do hlavičky, patičky, kontaktu, JSON-LD i OG obrázků.
 - [ ] Krátký příběh firmy (úvodní odstavec)
 - [ ] Rok založení, sídlo, počet lektorů
 - [ ] Autor citátu
-- [ ] Tým: jména, role, fotky (černobílé, převést do halftone / 1-bit ditheru)
+- [ ] Tým: jména, role, fotky (poměr 4 : 5, jednotné tmavé pozadí)
 
 ## 4. Nástroje – `src/app/nastroje/page.tsx`
 - [ ] Datum poslední kontroly srovnávací tabulky (2×)

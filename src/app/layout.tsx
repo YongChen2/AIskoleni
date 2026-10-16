@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="cs" className={fontVariables} style={brandCssVars} suppressHydrationWarning>
       <body>
-        <a href="#obsah" className="sr-only z-[200] rounded-lg bg-accent px-4 py-3 text-[15px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        <a href="#obsah" className="sr-only z-[200] rounded-lg bg-accent-strong px-4 py-3 text-[15px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Přeskočit na obsah
         </a>
         <SiteHeader />

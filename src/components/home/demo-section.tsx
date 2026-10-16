@@ -5,7 +5,7 @@ import { DEMO_DAILY_LIMIT } from "@/components/demo/roles";
 export function DemoSection() {
   return (
     <Section id="demo" className="scroll-mt-20 overflow-hidden">
-      <div aria-hidden className="glow left-1/2 top-[30%] h-[40rem] w-[70rem] -translate-x-1/2 opacity-80" />
+      <div aria-hidden className="glow left-1/2 top-[16rem] h-[40rem] w-[70rem] -translate-x-1/2 opacity-80" />
       <SectionHead
         align="center"
         eyebrow="Živé AI demo"
