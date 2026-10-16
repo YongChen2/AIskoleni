@@ -7,7 +7,7 @@ import { Swipe } from "@/components/swipe";
 /** Bento: první formát (vstupní bod) je velká karta s body programu, další dva vedle pod sebou. */
 export function Formats() {
   return (
-    <Section id="formaty">
+    <Section id="formaty" theme="light">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <SectionHead
           eyebrow="Formáty školení"

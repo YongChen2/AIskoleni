@@ -139,7 +139,7 @@ export default function NastrojePage() {
             </thead>
             <tbody>
               {rows.slice(1).map((r) => (
-                <tr key={r.label} className="border-b border-line transition-colors duration-200 last:border-b-0 hover:bg-white/[0.02]">
+                <tr key={r.label} className="border-b border-line transition-colors duration-200 last:border-b-0 hover:bg-tint/[0.02]">
                   <th scope="row" className="px-5 py-5 align-top text-[14px] font-medium text-muted">
                     {r.label}
                   </th>

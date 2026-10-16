@@ -99,7 +99,7 @@ export function DataSemafor() {
           </data>
         </p>
       </div>
-      <div className="h-0.5 bg-white/[0.06]" aria-hidden>
+      <div className="h-0.5 bg-tint/[0.06]" aria-hidden>
         <div
           className="h-full origin-left bg-accent transition-transform duration-500 ease-[var(--ease)]"
           style={{ transform: `scaleX(${(items.length - pool.length) / items.length})` }}
@@ -135,7 +135,7 @@ export function DataSemafor() {
                     key={z.id}
                     type="button"
                     onClick={() => place(i.id, z.id)}
-                    className="group inline-flex h-11 w-9 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-white/[0.06]"
+                    className="group inline-flex h-11 w-9 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-tint/[0.06]"
                     aria-label={`${i.label}: zařadit do zóny ${z.label}`}
                     title={z.label}
                   >

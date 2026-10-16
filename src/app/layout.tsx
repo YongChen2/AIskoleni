@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { brand, brandCssVars } from "@/config/brand";
+import { brand, brandCssVars, themeCss } from "@/config/brand";
 import { fontVariables } from "@/config/fonts";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ThemeBackdrop } from "@/components/theme-backdrop";
 import { MotionProvider } from "@/components/motion-provider";
 import { JsonLd } from "@/components/json-ld";
 import { ScrollProgress } from "@/components/scroll-progress";
@@ -36,6 +37,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="cs" className={fontVariables} style={brandCssVars} suppressHydrationWarning>
+      <head>
+        <style>{themeCss}</style>
+      </head>
       <body>
         <a href="#obsah" className="sr-only z-[200] rounded-lg bg-accent-strong px-4 py-3 text-[15px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Přeskočit na obsah
@@ -43,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteHeader />
         <main id="obsah">{children}</main>
         <SiteFooter />
+        <ThemeBackdrop />
         <ScrollProgress />
         <MotionProvider />
         <BottomBar />

@@ -69,7 +69,7 @@ export function BottomBar() {
                 aria-current={active ? "page" : undefined}
                 className={cx(
                   "flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[16px] text-[11px] font-medium transition-colors duration-200",
-                  active ? "bg-white/[0.06] text-fg" : "text-muted"
+                  active ? "bg-tint/[0.06] text-fg" : "text-muted"
                 )}
               >
                 <Icon size={20} className={active ? "text-accent" : undefined} />
@@ -89,7 +89,7 @@ export function BottomBar() {
             }}
             className={cx(
               "flex min-h-[52px] w-full flex-col items-center justify-center gap-1 rounded-[16px] text-[11px] font-medium transition-colors duration-200",
-              open ? "bg-white/[0.08] text-fg" : "text-muted"
+              open ? "bg-tint/[0.08] text-fg" : "text-muted"
             )}
           >
             {open ? <Close size={20} /> : <Menu size={20} />}

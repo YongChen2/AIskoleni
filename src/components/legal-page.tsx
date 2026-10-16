@@ -23,7 +23,7 @@ export function LegalPage({
             <ol className="sticky top-28 space-y-1">
               {sections.map((s, i) => (
                 <li key={s.h}>
-                  <a href={`#cast-${i + 1}`} className="flex gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition-colors duration-200 hover:bg-white/[0.04] hover:text-fg">
+                  <a href={`#cast-${i + 1}`} className="flex gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition-colors duration-200 hover:bg-tint/[0.04] hover:text-fg">
                     <span className="mono text-subtle">{i + 1}</span>
                     {s.h}
                   </a>

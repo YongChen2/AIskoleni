@@ -5,7 +5,7 @@ import { faq } from "@/content/site";
 
 export function Faq() {
   return (
-    <Section id="faq">
+    <Section id="faq" theme="light">
       <div className="grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
@@ -22,7 +22,7 @@ export function Faq() {
         <div className="lg:col-span-8">
           {faq.map((f) => (
             <details key={f.q} className="group border-b border-line first:border-t">
-              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-5 text-[17px] font-medium text-fg transition-colors duration-200 hover:text-white [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-5 text-[17px] font-medium text-fg transition-colors duration-200 hover:text-accent-hover [&::-webkit-details-marker]:hidden">
                 {f.q}
                 <span
                   aria-hidden

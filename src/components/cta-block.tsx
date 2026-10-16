@@ -14,10 +14,10 @@ export function CtaBlock({
   text?: string;
 }) {
   return (
-    <section className="section">
+    <section data-theme="accent" data-band="" className="section">
       <div className="shell">
         <div data-reveal-block className="card-glow relative isolate overflow-hidden px-6 py-16 text-center md:px-12 md:py-24">
-          <VideoBackground src="ambient" overlay="card" opacity={0.4} className="-z-10 [--vb-tint:var(--surface)]" />
+          <VideoBackground src="ambient" overlay="card" opacity={0.3} className="-z-10 mix-blend-multiply" />
           <div aria-hidden className="glow -z-10 left-1/2 top-[-60%] h-[40rem] w-[60rem] -translate-x-1/2" />
           <h2 className="display-2 mx-auto max-w-[18ch]">{title}</h2>
           <p className="lead mx-auto mt-5 max-w-[52ch]">{text}</p>

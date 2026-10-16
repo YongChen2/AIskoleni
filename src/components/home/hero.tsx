@@ -11,7 +11,7 @@ const meta: [string, string][] = [
 
 export function Hero({ visual }: { visual?: React.ReactNode }) {
   return (
-    <section className="relative isolate overflow-hidden">
+    <section data-theme="dark" data-band="" className="relative isolate overflow-hidden">
       {/* pozadí: smyčkové video, akcentní záře a 3D síť (na desktopu vpravo, na mobilu nahoře a vyblednutá) */}
       <VideoBackground src="hero" overlay="hero" className="-z-20" />
       <div aria-hidden className="glow -z-20 right-[-20%] top-[-10%] h-[42rem] w-[42rem] lg:right-[-6%] lg:top-[4%] lg:h-[48rem] lg:w-[56rem]" />

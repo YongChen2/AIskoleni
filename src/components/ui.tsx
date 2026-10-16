@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
+import type { ThemeName } from "@/config/brand";
 import { ArrowRight } from "./icons";
 import { VideoBackground } from "./video-background";
 
@@ -64,16 +65,20 @@ export function SectionHead({
   );
 }
 
-/** Obal sekce: svislé mezery + obsahový kontejner */
+/** Barevné prostředí pásu: tokeny přes data-theme, pozadí přes ThemeBackdrop (data-band) */
+export const band = (theme?: ThemeName) => (theme ? { "data-theme": theme, "data-band": "" } : {});
+
+/** Obal sekce: svislé mezery + obsahový kontejner. `theme` = samostatný barevný pás. */
 export function Section({
   id,
   children,
   className,
   shellClassName,
+  theme,
   ...rest
-}: { id?: string; children: ReactNode; className?: string; shellClassName?: string } & ComponentProps<"section">) {
+}: { id?: string; children: ReactNode; className?: string; shellClassName?: string; theme?: ThemeName } & ComponentProps<"section">) {
   return (
-    <section id={id} className={cx("section relative", className)} {...rest}>
+    <section id={id} className={cx("section relative", className)} {...band(theme)} {...rest}>
       <div className={cx("shell", shellClassName)}>{children}</div>
     </section>
   );

@@ -51,18 +51,106 @@ export const nav = [
   { href: "/o-nas", label: "O nás" },
 ] as const;
 
-export const brandCssVars = {
-  "--bg": brand.colors.bg,
-  "--surface": brand.colors.surface,
-  "--surface-2": brand.colors.surface2,
-  "--line": brand.colors.border,
-  "--line-strong": brand.colors.borderStrong,
-  "--fg": brand.colors.fg,
-  "--muted": brand.colors.muted,
-  "--subtle": brand.colors.subtle,
-  "--accent": brand.colors.accent,
-  "--accent-hover": brand.colors.accentHover,
-  "--accent-strong": brand.colors.accentStrong,
-  "--success": brand.colors.success,
-  "--warning": brand.colors.warning,
-} as React.CSSProperties;
+/**
+ * Tři barevná prostředí (UPGRADE-4): sekce s `data-theme="dark|light|accent"` přepíše tokeny níže.
+ * `tint` = barva jemných překryvů (hover, stopy posuvníků), `onAccent` = text na primárním tlačítku.
+ * Kontrast AA je ověřený pro text `fg`, `muted` i `subtle` na `bg` i `surface` každého theme.
+ */
+const themes = {
+  dark: {
+    bg: brand.colors.bg,
+    surface: brand.colors.surface,
+    surface2: brand.colors.surface2,
+    border: brand.colors.border,
+    borderStrong: brand.colors.borderStrong,
+    fg: brand.colors.fg,
+    muted: brand.colors.muted,
+    subtle: brand.colors.subtle,
+    accent: brand.colors.accent,
+    accentHover: brand.colors.accentHover,
+    accentStrong: brand.colors.accentStrong,
+    onAccent: "#FFFFFF",
+    success: brand.colors.success,
+    warning: brand.colors.warning,
+    tint: "#FFFFFF",
+    edge: "rgba(255,255,255,0.16)",
+    shadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 20px 60px -30px rgba(0,0,0,0.7)",
+    scheme: "dark",
+  },
+  light: {
+    /** teplý papír */
+    bg: "#F5F4F1",
+    surface: "#FFFFFF",
+    surface2: "#F0EFEB",
+    border: "rgba(8,9,11,0.08)",
+    borderStrong: "rgba(8,9,11,0.16)",
+    fg: "#0B0C0E",
+    muted: "#555A62",
+    /** 5,0 : 1 na papíru */
+    subtle: "#646973",
+    accent: "#E0282D",
+    /** text v akcentu (odznaky, ikony) – tmavší kvůli kontrastu malého písma (5,6 : 1) */
+    accentHover: "#BE1D23",
+    accentStrong: "#E0282D",
+    onAccent: "#FFFFFF",
+    success: "#0F7A45",
+    warning: "#9A5800",
+    tint: "#0B0C0E",
+    edge: "rgba(8,9,11,0.10)",
+    shadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)",
+    scheme: "light",
+  },
+  accent: {
+    bg: "#E0282D",
+    surface: "rgba(255,255,255,0.06)",
+    surface2: "rgba(255,255,255,0.10)",
+    border: "rgba(255,255,255,0.22)",
+    borderStrong: "rgba(255,255,255,0.4)",
+    /** na červené projde AA jen čistě bílá (4,66 : 1) → všechny úrovně textu bílé */
+    fg: "#FFFFFF",
+    muted: "#FFFFFF",
+    subtle: "#FFFFFF",
+    accent: "#FFFFFF",
+    accentHover: "#FFE6E3",
+    /** primární tlačítko je bílé s tmavým textem */
+    accentStrong: "#FFFFFF",
+    onAccent: "#0B0C0E",
+    success: "#FFFFFF",
+    warning: "#FFFFFF",
+    tint: "#FFFFFF",
+    edge: "rgba(255,255,255,0.35)",
+    shadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 24px 60px -30px rgba(80,0,0,0.6)",
+    scheme: "dark",
+  },
+} as const;
+
+export type ThemeName = keyof typeof themes;
+export const themeBg = { dark: themes.dark.bg, light: themes.light.bg, accent: themes.accent.bg } as const;
+
+const vars = (t: (typeof themes)[ThemeName]) =>
+  [
+    ["--bg", t.bg],
+    ["--surface", t.surface],
+    ["--surface-2", t.surface2],
+    ["--line", t.border],
+    ["--line-strong", t.borderStrong],
+    ["--fg", t.fg],
+    ["--muted", t.muted],
+    ["--subtle", t.subtle],
+    ["--accent", t.accent],
+    ["--accent-hover", t.accentHover],
+    ["--accent-strong", t.accentStrong],
+    ["--on-accent", t.onAccent],
+    ["--success", t.success],
+    ["--warning", t.warning],
+    ["--tint", t.tint],
+    ["--edge", t.edge],
+    ["--shadow-card", t.shadow],
+  ] as const;
+
+/** CSS pro `[data-theme]` – vkládá se do <head> v layoutu */
+export const themeCss = (Object.keys(themes) as ThemeName[])
+  .map((n) => `[data-theme="${n}"]{${vars(themes[n]).map(([k, v]) => `${k}:${v}`).join(";")};color-scheme:${themes[n].scheme};color:var(--fg)}`)
+  .join("\n");
+
+export const brandCssVars = Object.fromEntries(vars(themes.dark)) as React.CSSProperties;

@@ -110,7 +110,7 @@ export default function DemoShowcase() {
                 key={r.id}
                 className={cx(
                   "inline-flex min-h-10 shrink-0 cursor-pointer items-center rounded-[9px] px-3.5 text-[14px] font-medium transition-colors duration-200 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent",
-                  roleId === r.id ? "bg-white/[0.07] text-fg" : "text-muted hover:text-fg",
+                  roleId === r.id ? "bg-tint/[0.07] text-fg" : "text-muted hover:text-fg",
                 )}
               >
                 <input
@@ -192,7 +192,7 @@ export default function DemoShowcase() {
                     onClick={() => pick(() => setVariant(i as 0 | 1))}
                     className={cx(
                       "min-h-9 rounded-[8px] px-3 text-[13.5px] font-medium transition-colors duration-200",
-                      variant === i ? "bg-white/[0.08] text-fg" : "text-muted hover:text-fg",
+                      variant === i ? "bg-tint/[0.08] text-fg" : "text-muted hover:text-fg",
                     )}
                   >
                     <span className="text-subtle">{i === 0 ? "A" : "B"} ·</span> {v.label}

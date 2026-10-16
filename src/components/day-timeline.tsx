@@ -47,7 +47,7 @@ export function DayTimeline({ entries }: { entries: TimelineEntry[] }) {
             <p className="title mt-5">{current.title}</p>
             <p className="body mt-3 h-[7.5rem] overflow-hidden text-[15px]">{current.text}</p>
           </div>
-          <div className="mx-6 mb-6 h-1 overflow-hidden rounded-full bg-white/[0.08]" aria-hidden>
+          <div className="mx-6 mb-6 h-1 overflow-hidden rounded-full bg-tint/[0.08]" aria-hidden>
             <div
               className="h-full origin-left rounded-full bg-accent transition-transform duration-500 ease-[var(--ease)]"
               style={{ transform: `scaleX(${(active + 1) / entries.length})` }}

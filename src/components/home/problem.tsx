@@ -17,7 +17,7 @@ const solutions = [
 
 export function Problem() {
   return (
-    <Section>
+    <Section theme="light">
       <SectionHead
         title={
           <>

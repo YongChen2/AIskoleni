@@ -48,7 +48,7 @@ export function ReadinessQuiz() {
           <p className="mt-3 text-[clamp(3.5rem,8vw,6rem)] font-semibold leading-none tracking-[-0.05em] text-fg">
             <output>{pct}&nbsp;%</output>
           </p>
-          <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/[0.07]" aria-hidden>
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-tint/[0.07]" aria-hidden>
             <div className={cx("h-full origin-left rounded-full", barColor[t])} style={{ transform: `scaleX(${pct / 100})` }} />
           </div>
         </div>
@@ -60,7 +60,7 @@ export function ReadinessQuiz() {
                 <data value={a.pct}>{a.pct} %</data>
                 {a.area === weakest.area ? <span className="badge badge-danger text-[11px]">Nejslabší</span> : null}
               </dd>
-              <dd className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.07]" aria-hidden>
+              <dd className="mt-3 h-1 overflow-hidden rounded-full bg-tint/[0.07]" aria-hidden>
                 <div className={cx("h-full origin-left rounded-full", barColor[tone(a.pct)])} style={{ transform: `scaleX(${a.pct / 100})` }} />
               </dd>
             </div>
@@ -113,7 +113,7 @@ export function ReadinessQuiz() {
         {questions.map((x, i) => (
           <span
             key={x.id}
-            className={cx("h-1 flex-1 rounded-full transition-colors duration-300", i < step ? "bg-accent" : i === step ? "bg-fg/60" : "bg-white/[0.08]")}
+            className={cx("h-1 flex-1 rounded-full transition-colors duration-300", i < step ? "bg-accent" : i === step ? "bg-fg/60" : "bg-tint/[0.08]")}
           />
         ))}
       </div>

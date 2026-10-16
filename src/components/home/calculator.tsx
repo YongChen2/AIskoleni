@@ -122,7 +122,7 @@ export function Calculator() {
   const inputs = Object.values(ids).join(" ");
 
   return (
-    <Section id="kalkulacka">
+    <Section id="kalkulacka" theme="light">
       <SectionHead
         title="Kolik vás stojí rutina?"
         lead="Posuňte jezdce podle svého týmu. Výsledek je orientační – reálné číslo změříme po školení na vašich úlohách."

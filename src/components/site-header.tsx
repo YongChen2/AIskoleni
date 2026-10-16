@@ -68,7 +68,7 @@ export function SiteHeader() {
                       aria-current={active ? "page" : undefined}
                       className={cx(
                         "inline-flex h-9 items-center rounded-[9px] px-3 text-[14px] font-medium transition-colors duration-200",
-                        active ? "bg-white/[0.06] text-fg" : "text-muted hover:text-fg",
+                        active ? "bg-tint/[0.06] text-fg" : "text-muted hover:text-fg",
                       )}
                     >
                       {item.label}

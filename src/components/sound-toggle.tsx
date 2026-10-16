@@ -17,7 +17,7 @@ export function SoundToggle({ className, withLabel }: { className?: string; with
       title={label}
       onClick={() => setSound(!on)}
       className={cx(
-        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-[10px] transition-colors duration-200 hover:bg-white/[0.05] hover:text-fg lg:min-h-9 lg:min-w-9",
+        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-[10px] transition-colors duration-200 hover:bg-tint/[0.05] hover:text-fg lg:min-h-9 lg:min-w-9",
         on ? "text-fg" : "text-subtle",
         className
       )}

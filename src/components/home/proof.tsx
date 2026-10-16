@@ -5,7 +5,7 @@ const missing = (v: string) => v.includes("[DOPLNIT]");
 
 export function Proof() {
   return (
-    <Section>
+    <Section theme="light">
       <SectionHead title="Výsledky, které jdou změřit" lead="Po každém školení vedení dostane report. Tady jsou souhrnná čísla a hlas klientů." />
 
       <dl className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line md:mt-20 lg:grid-cols-4" data-reveal-group>

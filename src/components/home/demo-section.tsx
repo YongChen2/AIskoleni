@@ -3,7 +3,7 @@ import { DemoLoader } from "@/components/demo/demo-loader";
 
 export function DemoSection() {
   return (
-    <Section id="demo" className="scroll-mt-20 overflow-hidden">
+    <Section id="demo" theme="dark" className="scroll-mt-20 overflow-hidden">
       <div aria-hidden className="glow left-1/2 top-[16rem] h-[40rem] w-[70rem] -translate-x-1/2 opacity-80" />
       <SectionHead
         align="center"

@@ -32,6 +32,26 @@ Pravidla:
   gradientové okraje karet o šířce 1 px a šum nejvýš 3 %.
 - Zakázané jsou fialovo-modré „AI“ gradienty, neon, druhý akcent, světlý režim a míchání teplých a studených šedí.
 
+## Barevná prostředí (UPGRADE-4)
+Tři theme přes `data-theme` na sekci; tokeny pro všechna tři generuje `brand.ts` (`themeCss`).
+
+| Token | dark | light (teplý papír) | accent (červená plocha) |
+|---|---|---|---|
+| `--bg` | `#08090B` | `#F5F4F1` | `#E0282D` |
+| `--surface` / `--surface-2` | `#0E1014` / `#13161B` | `#FFFFFF` / `#F0EFEB` | bílá 6 % / 10 % |
+| `--line` | bílá 8 % | `rgba(8,9,11,0.08)` | bílá 22 % |
+| `--fg` / `--muted` / `--subtle` | `#F2F3F5` / `#9BA1AB` / `#7D838D` | `#0B0C0E` / `#555A62` / `#646973` | vše bílá (AA na červené projde jen bílá) |
+| `--accent-hover` (text v akcentu) | `#FF5A4F` | `#BE1D23` | `#FFE6E3` |
+| primární tlačítko | `#E0282D` + bílý text | `#E0282D` + bílý text | bílé + tmavý text (`--on-accent`) |
+| stín karty (`--shadow-card`) | tmavý difuzní | `0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06)` | jemný |
+
+- `--tint` je barva jemných překryvů (`bg-tint/[0.06]` místo `bg-white/…`), v light je tmavá.
+- **Dramaturgie úvodu:** hero (dark) → problém, formáty (light) → AI demo (dark) → kalkulačka, čísla, FAQ (light)
+  → CTA (accent) → patička (dark). Podstránky: hero dark, obsah light, CTA accent.
+- **Plynulý přechod:** pás = sekce s `data-band`. `ThemeBackdrop` drží pod obsahem pevnou vrstvu se třemi plochami
+  a prolíná jen jejich opacity, zatímco hranice pásů jede od 80 % do 50 % výšky viewportu. Bez JS má každý pás
+  vlastní pozadí. Hlavička přebírá theme pásu pod sebou.
+
 ## Typografie
 - **Font:** Geist (sans) pro nadpisy i text, Geist Mono jen na drobné štítky, čísla, kód a AI terminál.
   Fonty jsou self-hosted podmnožiny v `src/fonts`, viz `src/config/fonts.ts`.

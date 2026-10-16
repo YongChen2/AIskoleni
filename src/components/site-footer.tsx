@@ -12,7 +12,7 @@ const linkCls = "inline-flex min-h-11 items-center text-[15px] text-muted transi
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden border-t border-line">
+    <footer data-theme="dark" data-band="" className="relative overflow-hidden border-t border-line">
       <div aria-hidden className="glow -bottom-72 left-1/2 h-[32rem] w-[60rem] -translate-x-1/2 opacity-70" />
       <div className="shell relative grid gap-12 py-16 md:grid-cols-12 md:py-20">
         <div className="md:col-span-5">
