@@ -5,18 +5,18 @@ import { ArrowRight } from "@/components/icons";
 import { Badge, PageHero, Section, SectionHead } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "ChatGPT, Claude, Copilot, Gemini – srovnání pro firmy",
+  title: "ChatGPT, Claude, Copilot, Gemini, Grok – srovnání pro firmy",
   description:
-    "Nezávislé srovnání AI nástrojů pro firmy: ChatGPT, Claude, Microsoft Copilot a Gemini. Pro koho se který hodí, jak se napojí na vaše systémy a na co si dát pozor.",
+    "Nezávislé srovnání AI nástrojů pro firmy: ChatGPT, Claude, Microsoft Copilot, Gemini a Grok. Pro koho se který hodí, jak se napojí na vaše systémy a na co si dát pozor.",
   alternates: { canonical: "/nastroje" },
 };
 
-const tools = ["ChatGPT", "Claude", "Microsoft Copilot", "Gemini"] as const;
+const tools = ["ChatGPT", "Claude", "Microsoft Copilot", "Gemini", "Grok"] as const;
 
-const rows: { label: string; values: [string, string, string, string] }[] = [
+const rows: { label: string; values: [string, string, string, string, string] }[] = [
   {
     label: "Výrobce",
-    values: ["OpenAI", "Anthropic", "Microsoft", "Google"],
+    values: ["OpenAI", "Anthropic", "Microsoft", "Google", "xAI (firma Elona Muska)"],
   },
   {
     label: "Nejlépe sedí",
@@ -25,6 +25,7 @@ const rows: { label: string; values: [string, string, string, string] }[] = [
       "Práce s dlouhými dokumenty, psaní, analýzy a programování",
       "Firmy postavené na Microsoft 365 (Outlook, Teams, Word, Excel)",
       "Firmy postavené na Google Workspace (Gmail, Docs, Sheets)",
+      "Aktuální informace z webu a sítě X: rešerše, sledování trendů a dění na trhu",
     ],
   },
   {
@@ -34,11 +35,18 @@ const rows: { label: string; values: [string, string, string, string] }[] = [
       "Konektory a projekty se sdílenými podklady",
       "Přímo uvnitř aplikací Microsoft 365 a nad firemními daty v Microsoft Graph",
       "Přímo uvnitř aplikací Google Workspace",
+      "Napojení na Google Drive; do Microsoft 365 a Google Workspace se zapojuje méně než Copilot a Gemini",
     ],
   },
   {
     label: "Firemní tarif",
-    values: ["Business / Enterprise", "Team / Enterprise", "Microsoft 365 Copilot", "Gemini ve Workspace"],
+    values: [
+      "Business / Enterprise",
+      "Team / Enterprise",
+      "Microsoft 365 Copilot",
+      "Gemini ve Workspace",
+      "Business (cca 30 USD za uživatele měsíčně: správa týmu, analytika, Google Drive) / Enterprise (navíc SSO, SCIM, audit, volitelně Enterprise Vault s vlastními šifrovacími klíči). xAI uvádí, že firemní data nepoužívá k trénování.",
+    ],
   },
   {
     label: "Silná stránka",
@@ -47,6 +55,7 @@ const rows: { label: string; values: [string, string, string, string] }[] = [
       "Kvalita a přesnost textu, práce s rozsáhlým kontextem",
       "Pracuje tam, kde lidé už jsou – žádný nový nástroj",
       "Pracuje tam, kde lidé už jsou – žádný nový nástroj",
+      "Aktuálnost: čerpá z dění na síti X a na webu",
     ],
   },
   {
@@ -56,6 +65,7 @@ const rows: { label: string; values: [string, string, string, string] }[] = [
       "Méně integrací do kancelářských balíků",
       "Výsledky závisí na pořádku v oprávněních k souborům",
       "Smysl dává hlavně při plném využití Workspace",
+      "V českých firmách zatím málo rozšířený. Spíš doplněk než hlavní firemní nástroj",
     ],
   },
 ];
@@ -65,6 +75,7 @@ const picks = [
   ["Máte Google Workspace", "Gemini"],
   ["Potřebujete univerzální nástroj pro celý tým", "ChatGPT"],
   ["Hodně pracujete s dlouhými dokumenty, smlouvami a texty", "Claude"],
+  ["Potřebujete sledovat aktuální dění a trendy na síti X", "Grok jako doplněk"],
 ];
 
 export default function NastrojePage() {
@@ -79,7 +90,7 @@ export default function NastrojePage() {
         }
         lead="Neprodáváme licence a nemáme provize. Proto můžeme říct na rovinu, který nástroj se vám hodí – a že často nejde o jeden, ale o kombinaci."
         meta={[
-          ["Nástroje", "4"],
+          ["Nástroje", "5"],
           ["Doporučení", "Nezávislé"],
           ["Stav k", "[DOPLNIT] datum"],
           ["Revize", "1.0"],
@@ -111,15 +122,15 @@ export default function NastrojePage() {
           role="region"
           aria-label="Srovnávací tabulka AI nástrojů"
         >
-          <table className="w-full min-w-[56rem] border-collapse text-left">
-            <caption className="sr-only">Srovnání ChatGPT, Claude, Microsoft Copilot a Gemini pro firmy</caption>
+          <table className="w-full min-w-[64rem] table-fixed border-collapse text-left">
+            <caption className="sr-only">Srovnání ChatGPT, Claude, Microsoft Copilot, Gemini a Grok pro firmy</caption>
             <thead>
               <tr className="border-b border-line">
-                <th scope="col" className="w-[16%] px-6 py-5 text-[13px] font-medium text-subtle">
+                <th scope="col" className="w-[14%] px-5 py-5 text-[13px] font-medium text-subtle">
                   Parametr
                 </th>
                 {tools.map((t, ti) => (
-                  <th key={t} scope="col" className="px-6 py-5 align-bottom">
+                  <th key={t} scope="col" className="px-5 py-5 align-bottom">
                     <span className="block text-[18px] font-semibold tracking-[-0.02em] text-fg">{t}</span>
                     <span className="label mt-0.5 block font-normal">{rows[0].values[ti]}</span>
                   </th>
@@ -129,11 +140,11 @@ export default function NastrojePage() {
             <tbody>
               {rows.slice(1).map((r) => (
                 <tr key={r.label} className="border-b border-line transition-colors duration-200 last:border-b-0 hover:bg-white/[0.02]">
-                  <th scope="row" className="px-6 py-5 align-top text-[14px] font-medium text-muted">
+                  <th scope="row" className="px-5 py-5 align-top text-[14px] font-medium text-muted">
                     {r.label}
                   </th>
                   {r.values.map((v, i) => (
-                    <td key={i} className="px-6 py-5 align-top text-[15px] text-fg/90">
+                    <td key={i} className="px-5 py-5 align-top text-[14.5px] text-fg/90">
                       {v}
                     </td>
                   ))}
@@ -143,7 +154,7 @@ export default function NastrojePage() {
           </table>
         </div>
         <p className="label mt-4">
-          Nástroje se mění každý měsíc. Názvy tarifů a funkce ověřujeme k datu revize – [DOPLNIT] datum poslední kontroly.
+          Nástroje se mění každý měsíc. Názvy tarifů a funkce ověřujeme k datu revize – [DOPLNIT] datum poslední kontroly. Tarify Groku jsou aktuální k lednu 2026.
         </p>
       </Section>
 
@@ -152,7 +163,7 @@ export default function NastrojePage() {
           <div className="lg:col-span-4">
             <SectionHead eyebrow="Rychlé doporučení" title="Když nevíte, začněte tady" />
             <div className="mt-8 flex flex-wrap gap-2">
-              <Badge>Školíme na všech čtyřech</Badge>
+              <Badge>Srovnáváme nezávisle</Badge>
               <Badge>Pomůžeme s výběrem</Badge>
               <Badge tone="danger" dot>
                 Bez provizí

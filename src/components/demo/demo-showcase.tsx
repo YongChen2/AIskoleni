@@ -16,32 +16,29 @@ const STREAM_MS = 2000;
  * Spustí se při změně `runKey`, `skip()` ho dokončí hned. Reduced motion = celý text okamžitě.
  */
 function useStream(length: number, runKey: string | null) {
-  const [shown, setShown] = useState(0);
+  // Průběh je svázaný s klíčem běhu → při změně úkolu/varianty začíná od nuly bez resetu v efektu
+  const [state, setState] = useState<{ key: string | null; n: number }>({ key: null, n: 0 });
   const raf = useRef(0);
 
   useEffect(() => {
-    cancelAnimationFrame(raf.current);
     if (runKey === null) return;
-    if (prefersReducedMotion()) {
-      setShown(Infinity);
-      return;
-    }
+    const reduce = prefersReducedMotion();
     const t0 = performance.now();
     const tick = (t: number) => {
-      const p = Math.min(1, (t - t0) / STREAM_MS);
-      setShown(p >= 1 ? Infinity : Math.round(p * length));
+      const p = reduce ? 1 : Math.min(1, (t - t0) / STREAM_MS);
+      setState({ key: runKey, n: p >= 1 ? Infinity : Math.round(p * length) });
       if (p < 1) raf.current = requestAnimationFrame(tick);
     };
-    setShown(0);
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
   }, [runKey, length]);
 
   const skip = useCallback(() => {
     cancelAnimationFrame(raf.current);
-    setShown(Infinity);
-  }, []);
+    setState({ key: runKey, n: Infinity });
+  }, [runKey]);
 
+  const shown = state.key === runKey ? state.n : 0;
   return { shown, skip, streaming: runKey !== null && shown < length };
 }
 
