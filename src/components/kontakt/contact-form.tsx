@@ -127,7 +127,7 @@ export function ContactForm() {
         <legend className="micro float-left w-full text-muted">Velikost týmu *</legend>
         <div className="clear-both grid grid-cols-2 gap-px bg-line pt-2 sm:grid-cols-4">
           {teamSizes.map((s) => (
-            <label key={s} className="micro flex cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
+            <label key={s} className="micro flex min-h-11 cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
               <input type="radio" name="teamSize" value={s} className="sr-only" />
               <span aria-hidden>[ ]</span> {s} osob
             </label>
@@ -140,7 +140,7 @@ export function ContactForm() {
         <legend className="micro float-left w-full text-muted">Koho chcete školit</legend>
         <div className="clear-both grid grid-cols-2 gap-px bg-line pt-2 sm:grid-cols-3">
           {contactRoles.map((r) => (
-            <label key={r} className="micro flex cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
+            <label key={r} className="micro flex min-h-11 cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
               <input type="checkbox" name="roles" value={r} className="sr-only" />
               <span aria-hidden>[+]</span> {r}
             </label>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cx } from "@/components/ui";
 import { brand } from "@/config/brand";
+import { haptic } from "@/lib/haptics";
 
 type Zone = "green" | "orange" | "red";
 
@@ -37,6 +38,8 @@ export function DataSemafor() {
   const lastItem = items.find((i) => i.id === last);
 
   function place(id: string, zone: Zone) {
+    const item = items.find((i) => i.id === id);
+    haptic(item?.zone === zone ? 10 : [20, 40, 20]);
     setPlaced((p) => ({ ...p, [id]: zone }));
     setLast(id);
   }
@@ -81,7 +84,7 @@ export function DataSemafor() {
                   key={z.id}
                   type="button"
                   onClick={() => place(i.id, z.id)}
-                  className="micro-xs border-l border-line px-2 hover:bg-fg hover:text-bg"
+                  className="micro-xs min-h-11 min-w-11 border-l border-line px-2 hover:bg-fg hover:text-bg"
                   aria-label={`${i.label}: zařadit do zóny ${z.label}`}
                 >
                   {z.label[0]}
@@ -92,7 +95,7 @@ export function DataSemafor() {
           {done ? (
             <li className="micro py-2">
               [ HOTOVO ] Skóre {correct}/{items.length}.{" "}
-              <button type="button" className="text-accent underline" onClick={() => { setPlaced({}); setLast(null); }}>
+              <button type="button" className="min-h-11 text-accent underline" onClick={() => { setPlaced({}); setLast(null); }}>
                 Zkusit znovu
               </button>
             </li>

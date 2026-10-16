@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { setMenuOpen, useMenuOpen } from "@/lib/menu-store";
 import { brand, nav } from "@/config/brand";
 import { cx } from "./ui";
 import { HudMini } from "./hud";
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [openedAt, setOpenedAt] = useState(pathname);
+  const open = useMenuOpen();
 
   // Zavřít menu po navigaci
-  if (open && openedAt !== pathname) {
-    setOpen(false);
-  }
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
@@ -84,10 +84,7 @@ export function SiteHeader() {
             className="micro flex items-center border-l border-line px-4 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            onClick={() => {
-              setOpenedAt(pathname);
-              setOpen((v) => !v);
-            }}
+            onClick={() => setMenuOpen(!open)}
           >
             {open ? "[ ZAVŘÍT ]" : "[ MENU ]"}
           </button>
@@ -95,13 +92,13 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto bg-bg lg:hidden">
+        <div id="mobile-menu" className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] top-14 z-50 overflow-y-auto bg-bg lg:hidden">
           <nav aria-label="Mobilní navigace" className="flex flex-col">
             {[{ href: "/", label: "Úvod" }, ...nav, { href: "/kontakt", label: "Kontakt" }].map((item, i) => (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setOpen(false)}
+                onClick={() => setMenuOpen(false)}
                 className={cx(
                   "flex items-baseline gap-4 border-b border-line px-4 py-5",
                   pathname === item.href && "text-accent"
@@ -113,7 +110,7 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="p-4">
-            <Link href="/kontakt" className="btn btn-accent w-full" onClick={() => setOpen(false)}>
+            <Link href="/kontakt" className="btn btn-accent w-full" onClick={() => setMenuOpen(false)}>
               [ Domluvit školení ]
             </Link>
           </div>

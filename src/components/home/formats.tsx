@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ButtonLink, Section, SectionHead } from "@/components/ui";
 import { formats } from "@/content/site";
+import { Swipe } from "@/components/swipe";
 
 export function Formats() {
   return (
@@ -11,9 +12,9 @@ export function Formats() {
         <ButtonLink href="/skoleni">Detail formátů</ButtonLink>
       </div>
 
-      <ol className="hairgrid mt-12 md:mt-20 lg:grid-cols-3" data-reveal-group>
+      <Swipe count={formats.length} label="Formáty školení" className="mt-12 md:mt-20" gridClassName="lg:grid-cols-3" data-reveal-group>
         {formats.map((f) => (
-          <li key={f.slug} data-reveal className="group relative flex flex-col">
+          <li key={f.slug} data-reveal className="group relative flex w-[86%] shrink-0 flex-col bg-bg lg:w-auto">
             <Link href={`/skoleni#${f.slug}`} className="flex flex-1 flex-col p-5 hover:bg-bg-2 md:p-8">
               <div className="micro flex justify-between text-muted">
                 <span>&lt; MODUL {f.step} &gt;</span>
@@ -35,7 +36,7 @@ export function Formats() {
             </Link>
           </li>
         ))}
-      </ol>
+      </Swipe>
     </Section>
   );
 }

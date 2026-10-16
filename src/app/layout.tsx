@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/json-ld";
 import { BootSequence, bootScript } from "@/components/boot-sequence";
 import { Cursor } from "@/components/cursor";
 import { HudPanel } from "@/components/hud";
+import { BottomBar } from "@/components/bottom-bar";
 import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteFooter />
         <MotionProvider />
         <HudPanel />
+        <BottomBar />
         <Cursor />
         <JsonLd data={organizationSchema} />
       </body>

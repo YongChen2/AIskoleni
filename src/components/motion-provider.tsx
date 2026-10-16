@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { decrypt } from "@/lib/decrypt";
+import { afterLoadIdle, whenHydrated } from "@/lib/page-ready";
 import { getLenis, loadEngine, prefersReducedMotion, scrollToTarget, startLenis } from "@/lib/motion";
 
 const idle = (cb: () => void) => {
@@ -53,7 +54,7 @@ export function MotionProvider() {
     const stops: (() => void)[] = [];
     let onBoot: (() => void) | undefined;
 
-    loadEngine().then((engine) => {
+    Promise.all([loadEngine(), afterLoadIdle()]).then(([engine]) => {
       const { gsap, ScrollTrigger } = engine;
       if (cancelled) return;
       const below = (el: Element) => el.getBoundingClientRect().top > window.innerHeight * 0.92;
@@ -87,7 +88,7 @@ export function MotionProvider() {
             start: "top 90%",
             once: true,
             onEnter: () => {
-              const run = () => stops.push(decrypt(el, engine));
+              const run = () => whenHydrated(el, () => !cancelled && stops.push(decrypt(el, engine)));
               // během bootu počkat, až se overlay odsune
               if (document.documentElement.dataset.boot === "run") {
                 onBoot = run;

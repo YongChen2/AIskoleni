@@ -30,11 +30,11 @@ export function SiteFooter() {
           <p className="micro text-muted">[ Mapa webu ]</p>
           <ul className="micro mt-4 grid grid-cols-2">
             <li>
-              <Link href="/" className="inline-block py-1.5 hover:text-accent">&gt; Úvod</Link>
+              <Link href="/" className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">&gt; Úvod</Link>
             </li>
             {nav.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} className="inline-block py-1.5 hover:text-accent">&gt; {n.label}</Link>
+                <Link href={n.href} className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">&gt; {n.label}</Link>
               </li>
             ))}
           </ul>
@@ -43,7 +43,7 @@ export function SiteFooter() {
           <ul className="micro">
             {legal.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} className="inline-block py-1.5 hover:text-accent">{"/// "}{n.label}</Link>
+                <Link href={n.href} className="flex min-h-11 items-center hover:text-accent lg:inline-block lg:min-h-0 lg:py-1.5">{"/// "}{n.label}</Link>
               </li>
             ))}
           </ul>

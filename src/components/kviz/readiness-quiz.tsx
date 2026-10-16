@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { cx } from "@/components/ui";
+import { haptic } from "@/lib/haptics";
 import { type Area, areas, questions, recommend } from "./questions";
 
 export function ReadinessQuiz() {
@@ -15,6 +16,7 @@ export function ReadinessQuiz() {
   const pct = Math.round((total / (questions.length * 3)) * 100);
 
   function choose(score: number) {
+    haptic(12);
     setAnswers((a) => ({ ...a, [q.id]: score }));
     setStep((s) => s + 1);
   }
@@ -115,7 +117,7 @@ export function ReadinessQuiz() {
               type="button"
               onClick={() => choose(o.score)}
               className={cx(
-                "flex items-baseline gap-4 bg-bg px-4 py-4 text-left hover:bg-fg hover:text-bg",
+                "flex min-h-14 items-baseline gap-4 bg-bg px-4 py-4 text-left hover:bg-fg hover:text-bg",
                 answers[q.id] === o.score && "text-accent"
               )}
             >
@@ -125,7 +127,7 @@ export function ReadinessQuiz() {
           ))}
         </div>
         {step > 0 ? (
-          <button type="button" className="micro mt-6 text-muted hover:text-fg" onClick={() => setStep((s) => s - 1)}>
+          <button type="button" className="micro mt-4 min-h-11 text-muted hover:text-fg" onClick={() => setStep((s) => s - 1)}>
             {"<<<"} Zpět
           </button>
         ) : null}

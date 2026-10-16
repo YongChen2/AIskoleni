@@ -232,7 +232,7 @@ body::after {
   .range {
     appearance: none;
     width: 100%;
-    height: 24px;
+    height: 44px;
     background: transparent;
     cursor: pointer;
   }
@@ -475,4 +475,32 @@ html.has-cursor :is(input[type="text"], input[type="email"], input[type="tel"], 
 .hud-panel[data-shown="0"] {
   opacity: 0;
   transform: translate3d(0, 12px, 0);
+}
+
+/* Spodní lišta (mobil) */
+.bottom-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+.bottom-bar[data-hidden]:not([data-open]) {
+  transform: translate3d(0, 100%, 0);
+}
+@media (max-width: 1023.98px) {
+  body {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Swipe karty (mobil) */
+.swipe {
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.swipe::-webkit-scrollbar {
+  display: none;
+}
+.swipe > * {
+  scroll-snap-align: start;
 }

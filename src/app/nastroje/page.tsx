@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CtaBlock } from "@/components/cta-block";
+import { Swipe } from "@/components/swipe";
 import { PageHero, Section, SectionHead, Tag } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -87,7 +88,24 @@ export default function NastrojePage() {
 
       <Section>
         <SectionHead code="TAB.01" label="Srovnávací tabulka" meta="PRO FIREMNÍ POUŽITÍ" />
-        <div className="mt-12 overflow-x-auto md:mt-16" tabIndex={0} role="region" aria-label="Srovnávací tabulka AI nástrojů">
+        {/* mobil: swipe karty po nástrojích */}
+        <Swipe count={tools.length} label="Srovnání nástrojů" className="mt-12 lg:hidden">
+          {tools.map((t, ti) => (
+            <li key={t} className="w-[86%] shrink-0 bg-bg p-5">
+              <p className="micro-xs text-muted">TOOL.{String(ti + 1).padStart(2, "0")}</p>
+              <h3 className="macro-sm mt-3">{t}</h3>
+              <dl className="mt-6 space-y-4">
+                {rows.map((r) => (
+                  <div key={r.label} className="border-t border-line pt-3">
+                    <dt className="micro-xs text-muted">{r.label}</dt>
+                    <dd className="mt-1 text-[15px]">{r.values[ti]}</dd>
+                  </div>
+                ))}
+              </dl>
+            </li>
+          ))}
+        </Swipe>
+        <div className="mt-16 hidden overflow-x-auto lg:block" tabIndex={0} role="region" aria-label="Srovnávací tabulka AI nástrojů">
           <table className="w-full min-w-[56rem] border-collapse border border-line text-left">
             <caption className="sr-only">Srovnání ChatGPT, Claude, Microsoft Copilot a Gemini pro firmy</caption>
             <thead>

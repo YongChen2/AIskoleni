@@ -105,7 +105,7 @@ export default function DemoTerminal() {
               <label
                 key={r.id}
                 className={cx(
-                  "micro flex cursor-pointer items-center gap-3 px-3 py-3",
+                  "micro flex min-h-11 cursor-pointer items-center gap-3 px-3 py-3",
                   role === r.id ? "bg-fg text-bg" : "bg-bg hover:bg-bg-2"
                 )}
               >
@@ -177,7 +177,7 @@ export default function DemoTerminal() {
           <div className="flex items-center justify-between">
             <p className="micro text-muted">04 {">>>"} Hotový prompt</p>
             {prompt && status === "done" ? (
-              <button type="button" onClick={copy} className="micro-xs border border-line px-2 py-1 hover:bg-fg hover:text-bg">
+              <button type="button" onClick={copy} className="micro-xs min-h-11 border border-line px-3 hover:bg-fg hover:text-bg">
                 {copied ? "[ Zkopírováno ]" : "[ Kopírovat ]"}
               </button>
             ) : null}
