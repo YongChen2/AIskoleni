@@ -12,17 +12,15 @@ type Variant = "primary" | "secondary" | "ghost";
 export function ButtonLink({
   href,
   children,
-  variant,
-  accent,
+  variant = "secondary",
   arrow,
   size,
   className,
   ...rest
-}: ComponentProps<typeof Link> & { variant?: Variant; accent?: boolean; arrow?: boolean; size?: "sm" }) {
-  const v: Variant = variant ?? (accent ? "primary" : "secondary");
-  const showArrow = arrow ?? v === "primary";
+}: ComponentProps<typeof Link> & { variant?: Variant; arrow?: boolean; size?: "sm" }) {
+  const showArrow = arrow ?? variant === "primary";
   return (
-    <Link href={href} data-magnetic className={cx("btn", `btn-${v}`, size === "sm" && "btn-sm", className)} {...rest}>
+    <Link href={href} data-magnetic className={cx("btn", `btn-${variant}`, size === "sm" && "btn-sm", className)} {...rest}>
       {children}
       {showArrow ? (
         <span className="btn-arrow">
@@ -38,15 +36,11 @@ export function Eyebrow({ children, className }: { children: ReactNode; classNam
   return <p className={cx("eyebrow", className)}>{children}</p>;
 }
 
-/**
- * Hlavička sekce: volitelný eyebrow, nadpis H2 a perex.
- * Starý podpis (`code`/`label`/`meta`) zůstává jen přechodně – `label` se zobrazí jako eyebrow.
- */
+/** Hlavička sekce: volitelný eyebrow, nadpis H2 a perex. */
 export function SectionHead({
   eyebrow,
   title,
   lead,
-  label,
   align = "left",
   className,
   children,
@@ -54,17 +48,11 @@ export function SectionHead({
   eyebrow?: ReactNode;
   title?: ReactNode;
   lead?: ReactNode;
-  /** @deprecated přechodně – použijte `eyebrow` */
-  label?: string;
-  /** @deprecated */
-  code?: string;
-  /** @deprecated */
-  meta?: ReactNode;
   align?: "left" | "center";
   className?: string;
   children?: ReactNode;
 }) {
-  const e = eyebrow ?? label;
+  const e = eyebrow;
   return (
     <div className={cx(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
       {e ? <Eyebrow>{e}</Eyebrow> : null}
@@ -104,11 +92,6 @@ export function Badge({
   return <span className={cx("badge", tone && `badge-${tone}`, dot && "badge-dot", className)}>{children}</span>;
 }
 
-/** @deprecated přechodně – použijte `Badge` */
-export function Tag({ children, accent }: { children: ReactNode; accent?: boolean }) {
-  return <Badge tone={accent ? "danger" : undefined}>{children}</Badge>;
-}
-
 const metaCols: Record<number, string> = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-4" };
 
 /** Hlavička podstránky – eyebrow, H1, perex a volitelný řádek klíčových údajů */
@@ -123,8 +106,6 @@ export function PageHero({
   title: ReactNode;
   lead?: ReactNode;
   meta?: [string, string][];
-  /** @deprecated */
-  code?: string;
   children?: ReactNode;
 }) {
   return (

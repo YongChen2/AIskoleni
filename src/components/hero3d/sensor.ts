@@ -48,7 +48,7 @@ export function initSensor() {
   else listen();
 }
 
-/** Klik na [ AKTIVOVAT SENZOR ] (musí být přímo z uživatelské akce). */
+/** Klik na „Ovládat náklonem“ (musí být přímo z uživatelské akce). */
 export async function requestSensor() {
   const DOE = window.DeviceOrientationEvent as IOSOrientation;
   try {

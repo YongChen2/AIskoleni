@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
-  return renderOg({ title: "Záznamy z praxe", label: "Blog" });
+  return renderOg({ title: "Poznámky z praxe", label: "Blog" });
 }

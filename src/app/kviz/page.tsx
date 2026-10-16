@@ -14,22 +14,21 @@ export default function KvizPage() {
   return (
     <>
       <PageHero
-        code="SEC.40"
-        label="Diagnostika"
+        label="Test připravenosti"
         title={
           <>
-            Jak jste <span className="text-accent">připravení?</span>
+            Jak jste <span className="hl">připravení?</span>
           </>
         }
         lead="Devět otázek o strategii, nástrojích, datech a lidech. Na konci dostanete report se stupněm připravenosti a doporučeným dalším krokem."
         meta={[
-          ["Otázky", String(questions.length).padStart(2, "0")],
+          ["Otázky", String(questions.length)],
           ["Čas", "cca 2 min"],
-          ["Oblasti", "04"],
+          ["Oblasti", "4"],
           ["Data", "Neukládáme"],
         ]}
       />
-      <Section className="pt-10! md:pt-16!">
+      <Section className="pt-8! lg:pt-12!">
         <ReadinessQuiz />
       </Section>
     </>

@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <LegalPage
-      code="LEG.01"
       title="Osobní údaje"
       lead="Zpracováváme jen údaje, které potřebujeme k odpovědi na vaši poptávku a k poskytnutí školení."
       sections={[

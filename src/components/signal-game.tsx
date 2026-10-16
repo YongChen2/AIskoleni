@@ -58,14 +58,14 @@ export function SignalGame() {
   }
 
   return (
-    <div className="border border-line">
-      <div className="micro-xs flex justify-between border-b border-line px-3 py-2 text-muted">
-        <span>[ ZTRACENÝ SIGNÁL / MINIHRA ]</span>
-        <span>
-          {playing ? `KOLO ${round}/${ROUNDS}` : finished ? "DOKONČENO" : "PŘIPRAVENO"}
+    <div className="card-glow overflow-hidden">
+      <div className="flex items-center justify-between border-b border-line px-5 py-4">
+        <p className="text-[15px] font-medium text-fg">Chyťte signál</p>
+        <span className="mono text-[13px] text-subtle">
+          {playing ? `Kolo ${round}/${ROUNDS}` : finished ? "Hotovo" : "Připraveno"}
         </span>
       </div>
-      <div className="grid gap-px bg-line p-px" style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}>
+      <div className="grid gap-1.5 p-4" style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}>
         {Array.from({ length: COLS * ROWS }, (_, i) => (
           <button
             key={i}
@@ -74,31 +74,33 @@ export function SignalGame() {
             aria-label={target === i ? "Signál – klikněte" : `Buňka ${i + 1}`}
             onClick={() => hit(i)}
             className={cx(
-              "micro-xs aspect-square",
-              target === i ? "bg-accent text-bg" : miss === i ? "bg-bg-2 text-accent" : "bg-bg text-line",
-              playing ? "cursor-crosshair" : "cursor-default"
+              "aspect-square rounded-md border transition-colors duration-150",
+              target === i
+                ? "border-accent bg-accent shadow-[0_0_18px_rgba(255,59,59,0.55)]"
+                : miss === i
+                  ? "border-accent/40 bg-accent/10"
+                  : "border-line bg-surface-2",
+              playing ? "cursor-pointer" : "cursor-default"
             )}
-          >
-            {target === i ? "●" : miss === i ? "✕" : "+"}
-          </button>
+          />
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line p-3" aria-live="polite">
-        <p className="micro">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-5 py-4" aria-live="polite">
+        <p className="text-[14.5px] text-muted">
           {finished ? (
             <>
-              Průměrná reakce: <output className="text-accent">{avg} ms</output>
+              Průměrná reakce: <output className="mono font-medium text-fg">{avg} ms</output>
               {avg < 400 ? " · Reflexy na úrovni stroje." : " · Na školení vás zrychlíme."}
             </>
           ) : playing ? (
-            <span className="text-muted">Klikněte na červený signál, jakmile se objeví.</span>
+            "Klikněte na červený čtverec, jakmile se objeví."
           ) : (
-            <span className="text-muted">Než najdete cestu zpět, chyťte signál.</span>
+            "Než najdete cestu zpět, chyťte signál."
           )}
         </p>
         {!playing ? (
-          <button type="button" className="btn" onClick={start}>
-            {finished ? "[ Znovu ]" : "[ Spustit ]"}
+          <button type="button" className="btn btn-secondary btn-sm min-h-11 lg:min-h-9" onClick={start}>
+            {finished ? "Znovu" : "Spustit"}
           </button>
         ) : null}
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { TimelineEntry } from "@/content/site";
+import { Plus } from "./icons";
 import { cx } from "./ui";
 
 /**
@@ -32,31 +33,30 @@ export function DayTimeline({ entries }: { entries: TimelineEntry[] }) {
   return (
     <div className="grid gap-10 lg:grid-cols-12">
       <div className="hidden lg:col-span-5 lg:block">
-        <div className="sticky top-28 border border-line">
-          <div className="micro-xs flex justify-between border-b border-line px-4 py-2 text-muted">
-            <span>[ LOG / ŠKOLICÍ DEN ]</span>
-            <span>
-              {String(active + 1).padStart(2, "0")}/{String(entries.length).padStart(2, "0")}
+        <div className="card-glow sticky top-28 overflow-hidden">
+          <div className="flex items-center justify-between border-b border-line px-6 py-4">
+            <span className="badge">{current.tag}</span>
+            <span className="mono text-[13px] text-subtle">
+              {active + 1} / {entries.length}
             </span>
           </div>
-          <div className="p-6">
-            <p className="micro text-accent">{current.tag}</p>
-            <p className="macro mt-2 tabular-nums">
+          <div className="p-6 md:p-8">
+            <p className="text-[clamp(3rem,5vw,4.5rem)] font-semibold leading-none tracking-[-0.045em] text-fg tabular-nums">
               <time>{current.time}</time>
             </p>
-            <p className="micro mt-4">{current.title}</p>
-            <p className="mt-3 h-[7.5rem] overflow-hidden text-[15px] text-muted">{current.text}</p>
+            <p className="title mt-5">{current.title}</p>
+            <p className="body mt-3 h-[7.5rem] overflow-hidden text-[15px]">{current.text}</p>
           </div>
-          <div className="h-2 overflow-hidden border-t border-line" aria-hidden>
+          <div className="mx-6 mb-6 h-1 overflow-hidden rounded-full bg-white/[0.08]" aria-hidden>
             <div
-              className="h-full origin-left bg-accent transition-transform duration-300 ease-[steps(6)]"
+              className="h-full origin-left rounded-full bg-accent transition-transform duration-500 ease-[var(--ease)]"
               style={{ transform: `scaleX(${(active + 1) / entries.length})` }}
             />
           </div>
         </div>
       </div>
 
-      <ol className="border-t border-line lg:col-span-7">
+      <ol className="lg:col-span-7">
         {entries.map((e, i) => {
           const expanded = open === i;
           const hot = i === active;
@@ -67,26 +67,42 @@ export function DayTimeline({ entries }: { entries: TimelineEntry[] }) {
                 refs.current[i] = el;
               }}
               data-index={i}
-              className={cx("border-b border-line", (expanded || hot) && "bg-bg-2")}
+              className="relative border-b border-line first:border-t"
             >
+              <span
+                aria-hidden
+                className={cx(
+                  "absolute -left-px top-0 h-full w-px bg-accent transition-opacity duration-300 ease-[var(--ease)]",
+                  hot ? "opacity-100" : "opacity-0"
+                )}
+              />
               <button
                 type="button"
                 onClick={() => setOpen(expanded ? null : i)}
                 aria-expanded={expanded}
-                className="grid min-h-14 w-full grid-cols-[4.5rem_1fr_auto] items-baseline gap-3 px-3 py-5 text-left md:grid-cols-[6rem_1fr_auto] md:px-5"
+                className="grid min-h-16 w-full grid-cols-[4rem_1fr_auto] items-center gap-4 py-5 pl-4 pr-1 text-left md:grid-cols-[5rem_1fr_auto] md:pl-6"
               >
-                <time className={cx("micro tabular-nums", hot ? "text-accent" : "text-muted")}>{e.time}</time>
-                <span className="micro md:text-sm">
-                  <span className="text-muted">{">>>"} </span>
+                <time className={cx("mono text-[14px] tabular-nums transition-colors duration-300", hot ? "text-accent-hover" : "text-subtle")}>
+                  {e.time}
+                </time>
+                <span className={cx("text-[16px] font-medium transition-colors duration-300 md:text-[17px]", hot ? "text-fg" : "text-muted")}>
                   {e.title}
                 </span>
-                <span className="micro-xs text-muted">{expanded ? "[−]" : "[+]"}</span>
+                <span
+                  aria-hidden
+                  className={cx(
+                    "inline-flex h-8 w-8 items-center justify-center rounded-full border border-line text-muted transition-transform duration-300 ease-[var(--ease)]",
+                    expanded && "rotate-45"
+                  )}
+                >
+                  <Plus size={15} />
+                </span>
               </button>
               {expanded ? (
-                <p className="prose-body px-3 pb-6 pl-[calc(4.5rem+1.5rem)] text-muted md:px-5 md:pl-[calc(6rem+2rem)]">
-                  <span className="micro-xs mb-2 block text-accent">{e.tag}</span>
-                  {e.text}
-                </p>
+                <div className="pb-6 pl-[calc(4rem+2rem)] pr-12 md:pl-[calc(5rem+2.5rem)]">
+                  <span className="badge mb-3">{e.tag}</span>
+                  <p className="body text-[15px]">{e.text}</p>
+                </div>
               ) : null}
             </li>
           );

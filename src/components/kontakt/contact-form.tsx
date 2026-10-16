@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { cx } from "@/components/ui";
+import { ArrowRight, Check } from "@/components/icons";
 import { formats } from "@/content/site";
 import { contactRoles, contactSchema, teamSizes } from "./schema";
 
@@ -11,8 +11,8 @@ type Errors = Partial<Record<string, string[]>>;
 function FieldError({ errors, name }: { errors: Errors; name: string }) {
   const e = errors[name]?.[0];
   return e ? (
-    <p id={`${name}-error`} className="micro-xs mt-2 text-accent">
-      ERR {">>>"} {e}
+    <p id={`${name}-error`} className="mt-2 text-[13.5px] text-accent-hover">
+      {e}
     </p>
   ) : null;
 }
@@ -78,10 +78,12 @@ export function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div className="border border-line p-6 md:p-10" role="status">
-        <p className="micro text-accent">[ PŘENOS DOKONČEN ]</p>
-        <p className="macro-md mt-6">Děkujeme.</p>
-        <p className="prose-body mt-6">Ozveme se do dvou pracovních dnů a domluvíme krátký úvodní hovor.</p>
+      <div className="card-glow p-8 md:p-12" role="status">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-success/15 text-success">
+          <Check size={22} />
+        </span>
+        <p className="display-2 mt-8">Děkujeme.</p>
+        <p className="lead mt-4">Ozveme se do dvou pracovních dnů a domluvíme krátký úvodní hovor.</p>
       </div>
     );
   }
@@ -94,70 +96,69 @@ export function ContactForm() {
   });
 
   return (
-    <form onSubmit={submit} noValidate className="relative border border-line">
-      <div className="micro-xs flex justify-between border-b border-line px-4 py-2 text-muted md:px-6">
-        <span>[ FORMULÁŘ / POPTÁVKA ]</span>
-        <span>* POVINNÉ</span>
+    <form onSubmit={submit} noValidate className="card relative p-6 md:p-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="title">Poptávka školení</p>
+        <p className="label">* povinné údaje</p>
       </div>
 
       {context ? (
-        <p className="micro border-b border-line px-4 py-3 md:px-6">
-          <span className="text-accent">{">>>"}</span> {context}
+        <p className="mt-5 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-[14px] text-fg">
+          <span className="badge badge-danger badge-dot">Z kvízu</span>
+          {context}
         </p>
       ) : null}
 
-      <div className="grid gap-px bg-line md:grid-cols-2">
+      <div className="mt-8 grid gap-5 md:grid-cols-2">
         {[
           { name: "name", label: "Jméno a příjmení *", type: "text", auto: "name" },
           { name: "company", label: "Firma *", type: "text", auto: "organization" },
           { name: "email", label: "E-mail *", type: "email", auto: "email" },
           { name: "phone", label: "Telefon", type: "tel", auto: "tel" },
         ].map((f) => (
-          <div key={f.name} className="bg-bg p-4 md:p-6">
-            <label htmlFor={f.name} className="micro text-muted">
+          <div key={f.name}>
+            <label htmlFor={f.name} className="field-label">
               {f.label}
             </label>
-            <input {...field(f.name)} type={f.type} autoComplete={f.auto} className="field mt-2" />
+            <input {...field(f.name)} type={f.type} autoComplete={f.auto} className="field" />
             <FieldError errors={errors} name={f.name} />
           </div>
         ))}
       </div>
 
-      <fieldset className="border-t border-line p-4 md:p-6" aria-describedby={errors.teamSize ? "teamSize-error" : undefined}>
-        <legend className="micro float-left w-full text-muted">Velikost týmu *</legend>
-        <div className="clear-both grid grid-cols-2 gap-px bg-line pt-2 sm:grid-cols-4">
+      <fieldset className="mt-7" aria-describedby={errors.teamSize ? "teamSize-error" : undefined}>
+        <legend className="field-label">Velikost týmu *</legend>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {teamSizes.map((s) => (
-            <label key={s} className="micro flex min-h-11 cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
+            <label key={s} className="choice">
               <input type="radio" name="teamSize" value={s} className="sr-only" />
-              <span aria-hidden>[ ]</span> {s} osob
+              {s} osob
             </label>
           ))}
         </div>
         <FieldError errors={errors} name="teamSize" />
       </fieldset>
 
-      <fieldset className="border-t border-line p-4 md:p-6">
-        <legend className="micro float-left w-full text-muted">Koho chcete školit</legend>
-        <div className="clear-both grid grid-cols-2 gap-px bg-line pt-2 sm:grid-cols-3">
+      <fieldset className="mt-7">
+        <legend className="field-label">Koho chcete školit</legend>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {contactRoles.map((r) => (
-            <label key={r} className="micro flex min-h-11 cursor-pointer items-center gap-3 bg-bg p-3 has-[:checked]:bg-fg has-[:checked]:text-bg">
+            <label key={r} className="choice">
               <input type="checkbox" name="roles" value={r} className="sr-only" />
-              <span aria-hidden>[+]</span> {r}
+              <span aria-hidden className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border border-line-strong text-transparent [.choice:has(:checked)_&]:border-accent [.choice:has(:checked)_&]:bg-accent [.choice:has(:checked)_&]:text-white">
+                <Check size={11} />
+              </span>
+              {r}
             </label>
           ))}
         </div>
       </fieldset>
 
-      <div className="border-t border-line p-4 md:p-6">
-        <label htmlFor="message" className="micro text-muted">
+      <div className="mt-7">
+        <label htmlFor="message" className="field-label">
           Zpráva
         </label>
-        <textarea
-          {...field("message")}
-          rows={5}
-          className="field mt-2 resize-y"
-          placeholder="Co od školení čekáte? Jaké nástroje používáte?"
-        />
+        <textarea {...field("message")} rows={5} className="field resize-y" placeholder="Co od školení čekáte? Jaké nástroje používáte?" />
         <FieldError errors={errors} name="message" />
       </div>
 
@@ -167,21 +168,26 @@ export function ContactForm() {
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line p-4 md:p-6">
-        <p className="micro-xs max-w-md text-muted">
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
+        <p className="label max-w-md">
           Údaje použijeme jen k odpovědi na poptávku. Více v{" "}
-          <a href="/ochrana-osobnich-udaju" className="underline">
+          <a href="/ochrana-osobnich-udaju" className="text-muted underline underline-offset-4 hover:text-fg">
             ochraně osobních údajů
           </a>
           .
         </p>
-        <button type="submit" className={cx("btn btn-accent")} disabled={status === "sending"}>
-          {status === "sending" ? "[ Odesílám… ]" : "[ Odeslat poptávku ]"}
+        <button type="submit" className="btn btn-primary" disabled={status === "sending"}>
+          {status === "sending" ? "Odesílám…" : "Odeslat poptávku"}
+          {status === "sending" ? null : (
+            <span className="btn-arrow">
+              <ArrowRight size={16} />
+            </span>
+          )}
         </button>
       </div>
       {status === "error" ? (
-        <p role="alert" className="micro border-t border-accent px-4 py-3 text-accent md:px-6">
-          ERR {">>>"} {message}
+        <p role="alert" className="mt-5 rounded-xl border border-accent/40 bg-accent/[0.07] px-4 py-3 text-[14.5px] text-accent-hover">
+          {message}
         </p>
       ) : null}
     </form>

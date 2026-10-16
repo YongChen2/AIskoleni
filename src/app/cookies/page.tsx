@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <LegalPage
-      code="LEG.02"
       title="Cookies"
       lead="Web nepoužívá reklamní ani analytické cookies, proto vás neobtěžujeme cookie lištou."
       sections={[

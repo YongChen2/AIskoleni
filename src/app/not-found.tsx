@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SignalGame } from "@/components/signal-game";
-import { ButtonLink, SectionHead } from "@/components/ui";
+import { ButtonLink, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Stránka nenalezena",
@@ -9,18 +9,18 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <section className="px-4 pb-20 pt-10 md:px-8 md:pt-16">
-      <SectionHead code="ERR.404" label="Signál ztracen" meta="STATUS: NENALEZENO" />
-      <div className="mt-10 grid gap-12 md:mt-16 lg:grid-cols-12">
+    <section className="relative isolate overflow-hidden pb-24 pt-16 md:pt-24">
+      <div aria-hidden className="grid-bg absolute inset-0 -z-10" />
+      <div aria-hidden className="glow -z-10 left-[-10%] top-[-20%] h-[36rem] w-[44rem]" />
+      <div className="shell grid items-center gap-14 lg:grid-cols-12">
         <div className="lg:col-span-6">
-          <h1 className="macro text-[clamp(6rem,22vw,20rem)]">
-            4<span className="text-accent">0</span>4
+          <Eyebrow>Chyba 404</Eyebrow>
+          <h1 className="display-1 mt-6">
+            Tahle stránka <span className="hl">neexistuje</span>
           </h1>
-          <p className="prose-body mt-8">
-            Tahle stránka neexistuje, nebo se přesunula. Zkuste úvod, nebo si mezitím otestujte reflexy.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href="/" accent>
+          <p className="lead mt-6">Možná se přesunula, nebo je v odkazu překlep. Zkuste úvod – nebo si mezitím otestujte reflexy.</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <ButtonLink href="/" variant="primary">
               Zpět na úvod
             </ButtonLink>
             <ButtonLink href="/skoleni">Formáty školení</ButtonLink>

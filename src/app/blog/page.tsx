@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHero, Section } from "@/components/ui";
+import { ArrowUpRight } from "@/components/icons";
+import { Badge, PageHero, Section } from "@/components/ui";
 import { formatDate, posts } from "@/content/blog/posts";
 
 export const metadata: Metadata = {
@@ -14,37 +15,33 @@ export default function BlogPage() {
   return (
     <>
       <PageHero
-        code="SEC.50"
         label="Blog"
         title={
           <>
-            Záznamy <span className="text-accent">z praxe</span>
+            Poznámky <span className="hl">z praxe</span>
           </>
         }
         lead="Co funguje, co ne a na co si dát pozor. Píšeme z toho, co vidíme na školeních."
-        meta={[
-          ["Články", String(posts.length).padStart(2, "0")],
-          ["Jazyk", "Čeština"],
-        ]}
       />
-      <Section className="pt-0! md:pt-0!">
-        <ol className="border-t border-line">
-          {sorted.map((p, i) => (
-            <li key={p.slug} className="border-b border-line">
-              <Link href={`/blog/${p.slug}`} className="group grid gap-4 py-8 hover:bg-bg-2 md:grid-cols-12 md:px-4 md:py-10">
-                <span className="micro text-muted md:col-span-2">
-                  LOG.{String(sorted.length - i).padStart(3, "0")}
-                  <br />
-                  <time dateTime={p.date}>{formatDate(p.date)}</time>
-                </span>
-                <span className="md:col-span-7">
-                  <span className="macro-sm block group-hover:text-accent">{p.title}</span>
-                  <span className="prose-body mt-4 block text-muted">{p.description}</span>
-                </span>
-                <span className="micro flex justify-between md:col-span-3 md:flex-col md:items-end">
-                  <span className="text-accent">[ {p.tag} ]</span>
-                  <span className="text-muted">{p.readingMinutes} MIN {">>>"}</span>
-                </span>
+      <Section className="pt-0! lg:pt-0!">
+        <ol className="grid gap-4" data-reveal-group>
+          {sorted.map((p) => (
+            <li key={p.slug} data-reveal>
+              <Link href={`/blog/${p.slug}`} className="card group grid gap-5 p-6 md:grid-cols-12 md:items-start md:p-8">
+                <div className="flex items-center gap-3 md:col-span-3 md:flex-col md:items-start">
+                  <Badge>{p.tag}</Badge>
+                  <span className="label">
+                    <time dateTime={p.date}>{formatDate(p.date)}</time> · {p.readingMinutes} min čtení
+                  </span>
+                </div>
+                <div className="md:col-span-8">
+                  <h2 className="text-[clamp(1.35rem,2.2vw,1.75rem)] font-semibold leading-[1.2] tracking-[-0.03em] text-fg">{p.title}</h2>
+                  <p className="body mt-3 text-[15px]">{p.description}</p>
+                </div>
+                <ArrowUpRight
+                  size={20}
+                  className="hidden justify-self-end text-subtle transition-[transform,color] duration-300 ease-[var(--ease)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg md:col-span-1 md:block"
+                />
               </Link>
             </li>
           ))}

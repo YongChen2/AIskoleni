@@ -33,11 +33,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-success: var(--success);
   --color-warning: var(--warning);
-  /* přechodné aliasy starých tokenů (odstraní se s přestavbou podstránek) */
-  --color-bg-2: var(--surface);
-  --color-signal: var(--success);
   --font-sans: var(--font-sans), system-ui, sans-serif;
-  --font-display: var(--font-sans), system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
   --radius-card: var(--radius-card);
   --ease-soft: var(--ease);
@@ -495,63 +491,6 @@ p {
     border: 4px solid var(--surface);
     box-shadow: 0 0 0 1px var(--line-strong);
   }
-
-  /* ---------- Přechodné staré třídy (podstránky se přestavují v krocích 3–4) ---------- */
-  .macro {
-    font-weight: 600;
-    font-size: clamp(2.75rem, 6vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-  }
-  .macro-md {
-    font-weight: 600;
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    line-height: 1.08;
-    letter-spacing: -0.04em;
-  }
-  .macro-sm {
-    font-weight: 600;
-    font-size: clamp(1.2rem, 1.6vw, 1.5rem);
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-  }
-  .micro,
-  .micro-xs {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-  .prose-body {
-    max-width: 65ch;
-  }
-  .hairgrid {
-    display: grid;
-    gap: 1px;
-    overflow: hidden;
-    border-radius: var(--radius-card);
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-  .hairgrid > * {
-    background: var(--surface);
-  }
-  .outline-num,
-  .hazard,
-  .barcode {
-    display: none;
-  }
-  .cursor-block {
-    display: inline-block;
-    width: 0.5em;
-    height: 1.05em;
-    vertical-align: text-bottom;
-    border-radius: 2px;
-    background: var(--muted);
-  }
-}
-
-/* Zvýraznění při hoveru u řádků seznamu (blog, FAQ) */
-.row-link {
-  transition: background-color 0.25s var(--ease);
 }
 
 @media (prefers-reduced-motion: reduce) {

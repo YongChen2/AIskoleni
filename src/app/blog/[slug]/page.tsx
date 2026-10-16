@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
 import { brand } from "@/config/brand";
 import { CtaBlock } from "@/components/cta-block";
-import { SectionHead } from "@/components/ui";
+import { ArrowLeft } from "@/components/icons";
+import { Badge } from "@/components/ui";
 import { formatDate, getPost, posts } from "@/content/blog/posts";
 
 export function generateStaticParams() {
@@ -31,23 +32,26 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
 
   return (
     <>
-      <article className="px-4 pb-16 pt-10 md:px-8 md:pb-28 md:pt-16">
-        <SectionHead code={`LOG / ${post.tag}`} label="Článek" meta={<Link href="/blog" className="hover:text-fg">{"<<<"} Všechny články</Link>} />
-        <div className="mt-10 grid gap-8 md:mt-16 lg:grid-cols-12">
-          <h1 className="macro-md lg:col-span-10 lg:col-start-1">{post.title}</h1>
-          <dl className="micro grid grid-cols-[auto_1fr] content-start gap-x-6 gap-y-1 self-start lg:sticky lg:top-28 lg:col-span-3">
-            <dt className="text-muted">Datum</dt>
-            <dd>
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
-            </dd>
-            <dt className="text-muted">Čtení</dt>
-            <dd>{post.readingMinutes} min</dd>
-            <dt className="text-muted">Autor</dt>
-            <dd>[DOPLNIT]</dd>
-          </dl>
-          <div className="prose-body text-[16px] md:text-[17px] lg:col-span-7 lg:col-start-5">
-            <p className="mb-10 text-lg text-muted">{post.description}</p>
-            <Body />
+      <article className="relative isolate overflow-hidden pb-20 pt-12 md:pb-28 md:pt-20">
+        <div aria-hidden className="glow -z-10 -top-56 right-[-10%] h-[34rem] w-[46rem]" />
+        <div className="shell">
+          <div className="mx-auto max-w-[44rem]">
+            <Link href="/blog" className="btn btn-ghost -ml-3 min-h-11">
+              <ArrowLeft size={16} />
+              Všechny články
+            </Link>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Badge>{post.tag}</Badge>
+              <span className="label">
+                <time dateTime={post.date}>{formatDate(post.date)}</time> · {post.readingMinutes} min čtení · Autor [DOPLNIT]
+              </span>
+            </div>
+            <h1 className="mt-6 text-[clamp(2.25rem,4.6vw,3.75rem)] font-semibold leading-[1.06] tracking-[-0.04em]">{post.title}</h1>
+            <p className="lead mt-6">{post.description}</p>
+            <div className="divider my-12" />
+            <div className="article text-[17px] leading-[1.75] text-muted md:text-[18px]">
+              <Body />
+            </div>
           </div>
         </div>
       </article>

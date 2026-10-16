@@ -16,7 +16,7 @@ export const posts: Post[] = [
       "Follow-upy, příprava na schůzku, nabídky, zápisy a analýza ztracených obchodů. Pět úloh, kde obchodníkům AI ušetří nejvíc času.",
     date: "2026-09-08",
     readingMinutes: 5,
-    tag: "OBCHOD",
+    tag: "Obchod",
   },
   {
     slug: "co-nikdy-nedavat-do-chatgpt",
@@ -25,7 +25,7 @@ export const posts: Post[] = [
       "Osobní údaje, hesla, nezveřejněná čísla. Jaká data do AI nástrojů nepatří, proč a jak s nimi přesto pracovat bezpečně.",
     date: "2026-09-22",
     readingMinutes: 6,
-    tag: "BEZPEČNOST",
+    tag: "Bezpečnost",
   },
   {
     slug: "copilot-vs-claude-ve-firme",
@@ -34,7 +34,7 @@ export const posts: Post[] = [
       "Microsoft Copilot žije v Outlooku a Teams, Claude vyniká v práci s textem. Kdy se hodí který a proč se často vyplatí oba.",
     date: "2026-10-06",
     readingMinutes: 5,
-    tag: "NÁSTROJE",
+    tag: "Nástroje",
   },
 ];
 

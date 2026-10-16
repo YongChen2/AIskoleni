@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContactForm } from "@/components/kontakt/contact-form";
+import { Clock, Mail, Phone } from "@/components/icons";
 import { PageHero, Section } from "@/components/ui";
 import { brand } from "@/config/brand";
 
@@ -11,53 +12,54 @@ export const metadata: Metadata = {
   alternates: { canonical: "/kontakt" },
 };
 
+const info = [
+  { Icon: Mail, k: "E-mail", v: <a href={`mailto:${brand.contact.email}`} className="transition-colors hover:text-accent-hover">{brand.contact.email}</a> },
+  { Icon: Phone, k: "Telefon", v: brand.contact.phone },
+  { Icon: Clock, k: "Odezva", v: "Do 2 pracovních dnů" },
+];
+
 export default function KontaktPage() {
   return (
     <>
       <PageHero
-        code="SEC.70"
         label="Kontakt"
         title={
           <>
-            Domluvit <span className="text-accent">školení</span>
+            Domluvit <span className="hl">školení</span>
           </>
         }
         lead="Pár údajů o vašem týmu a ozveme se do dvou pracovních dnů. První hovor je nezávazný a trvá zhruba půl hodiny."
       />
-      <Section className="pt-0! md:pt-0!">
-        <div className="grid gap-10 border-t border-line pt-12 lg:grid-cols-12">
+      <Section className="pt-0! lg:pt-0!">
+        <div className="grid gap-4 lg:grid-cols-12">
           <aside className="lg:col-span-4">
-            <dl className="micro space-y-6">
-              <div>
-                <dt className="text-muted">E-mail</dt>
-                <dd className="mt-1 text-base normal-case tracking-normal">
-                  <a href={`mailto:${brand.contact.email}`} className="hover:text-accent">
-                    {brand.contact.email}
-                  </a>
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted">Telefon</dt>
-                <dd className="mt-1 text-base tracking-normal">{brand.contact.phone}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Fakturační údaje</dt>
-                <dd className="mt-1 normal-case">
-                  {brand.contact.company}
-                  <br />
-                  {brand.contact.ico}
-                  <br />
-                  {brand.contact.address}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted">Odezva</dt>
-                <dd className="mt-1">Do 2 pracovních dnů</dd>
-              </div>
-            </dl>
+            <div className="card p-6 lg:sticky lg:top-24">
+              <ul className="space-y-5">
+                {info.map(({ Icon, k, v }) => (
+                  <li key={k} className="flex gap-4">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface-2 text-muted">
+                      <Icon size={18} />
+                    </span>
+                    <span>
+                      <span className="label block">{k}</span>
+                      <span className="mt-0.5 block text-[15px] text-fg">{v}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="divider my-6" />
+              <p className="label">Fakturační údaje</p>
+              <p className="mt-2 text-[14px] leading-relaxed text-muted">
+                {brand.contact.company}
+                <br />
+                {brand.contact.ico}
+                <br />
+                {brand.contact.address}
+              </p>
+            </div>
           </aside>
           <div className="lg:col-span-8">
-            <Suspense fallback={<div className="micro min-h-[40rem] border border-line p-6 text-muted">[ NAČÍTÁM FORMULÁŘ ]</div>}>
+            <Suspense fallback={<div className="card min-h-[44rem] p-6 text-[15px] text-subtle">Načítám formulář…</div>}>
               <ContactForm />
             </Suspense>
           </div>
