@@ -73,10 +73,14 @@ export default function BezpecnostPage() {
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
             <p className="lead">
-              Evropský AI Act ukládá firmám, které AI používají, zajistit dostatečnou úroveň AI gramotnosti svých lidí.
-              Školení s ověřením znalostí a průběžnou evidencí proškolenosti je nejjednodušší způsob, jak to doložit.
+              Evropský AI Act ukládá firmám, které AI používají, přijmout opatření na podporu AI gramotnosti svých lidí –
+              přiměřeně tomu, jak a k čemu AI používají. Školení s ověřením znalostí a evidencí proškolenosti je nejsnazší
+              způsob, jak to doložit.
             </p>
-            <p className="label mt-6">Nejde o právní poradenství. Výklad pro vaši firmu konzultujte s právníkem.</p>
+            <p className="label mt-6">
+              Znění podle nařízení (EU) 2026/1744 (Digital Omnibus), účinné od 27. 7. 2026. Nejde o právní poradenství. Výklad pro
+              vaši firmu konzultujte s právníkem.
+            </p>
           </div>
         </div>
       </Section>

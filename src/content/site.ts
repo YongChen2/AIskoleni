@@ -157,7 +157,7 @@ export const faq = [
   },
   {
     q: "Pomůže nám školení se splněním AI Actu?",
-    a: "AI Act ukládá firmám zajistit dostatečnou AI gramotnost lidí, kteří s AI pracují. Školení i průběžná evidence proškolenosti vám k tomu dají podklady. Právní poradenství ale neposkytujeme.",
+    a: "AI Act ukládá firmám, které AI používají, přijmout opatření na podporu AI gramotnosti svých lidí – přiměřeně tomu, jak a k čemu AI používají. Školení i průběžná evidence proškolenosti vám k tomu dají podklady. Právní poradenství ale neposkytujeme.",
   },
   {
     q: "Kolik školení stojí?",
